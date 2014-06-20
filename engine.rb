@@ -125,7 +125,7 @@ class CardLoader
 	end
 
 	def card(name, &detail)
-		one = OneCard.new name
+		one = OneCard.new
 		one.instance_eval &detail
 		one.product.name = name
 		Card.cards[name] = one.product
