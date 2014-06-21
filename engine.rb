@@ -1,20 +1,70 @@
 require 'pp'
+require './phase'
 
 class Player
 	attr_accessor :deck
+	attr_accessor :hero
+	attr_accessor :hand
 
 	def initialize(_deck)
 		@deck = Deck.new(_deck)
+		@hero = @deck.hero
+		@hand = []
+	end
+
+	def draw_card
+		card = @deck.draw
+		@hand << card
 	end
 end
 
 class Match
 	attr_accessor :players
+	attr_accessor :turn
+
+	def current_player
+		@players[@sub_turn]
+	end
+
+	def opponent_player
+		@players[1 - @sub_turn]
+	end
 
 	def initialize(deck1, deck2)
 		@players = []
 		@players << Player.new(deck1)
 		@players << Player.new(deck2)
+		@game_over = false
+	end
+
+	def prepare_to_start
+		puts "Prepare to start game"
+		3.times do
+			current_player.draw_card
+		end
+		4.times do
+			opponent_player.draw_card
+		end
+	end
+
+	def start
+		@turn = 1
+		@sub_turn = 0
+		prepare_to_start
+		main_loop
+	end
+
+	def main_loop
+		puts "Main loop"
+		PhaseBegin.new(self).run
+	end
+
+	def forward_turn
+		@sub_turn += 1
+		if @sub_turn == 2
+			@sub_turn = 0
+			@turn += 1
+		end
 	end
 end
 
@@ -85,6 +135,9 @@ class CardHero < Card
 	end
 end
 
+class CardSpecial < Card
+end
+
 class Deck
 	attr_accessor :hero
 	attr_accessor :cards
@@ -92,16 +145,30 @@ class Deck
 
 	def initialize(fn)
 		load_deck fn
+		@tired_count = 0
 	end
 
 	def load_deck(fn)
 		@name = fn
 		f = File.open(fn)
 		@hero = Card[f.readline.chomp]
-		@cards = f.lines.map(&:chomp).map do |cn|
+		@cards = f.each_line.map(&:chomp).map do |cn|
 			Card[cn]
 		end
 		f.close
+	end
+
+	def draw
+		if cards.count > 0
+			@cards.shift
+		else
+			card = Card["Tired Card"]
+			@tired_count += 1
+			damage = @tired_count
+			card.instance_eval do
+				@damage = damage
+			end
+		end
 	end
 end
 
@@ -146,4 +213,8 @@ end
 
 CardLoader.new.load_all_cards
 
-pp Match.new("test_deck.txt", "test_deck.txt")
+match = Match.new("test_deck.txt", "test_deck.txt")
+
+match.start
+
+pp match
