@@ -4,3 +4,10 @@ card "Jaina Proudmoore" do
 	rarity :normal
 	hero_power "Fireblast"
 end
+
+card "Fireblast" do
+	type :hero_power
+	clas :mage
+	rarity :normal
+end
+
