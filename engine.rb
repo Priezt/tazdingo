@@ -1,13 +1,72 @@
 require 'pp'
 require './phase'
 
+module Logger
+	def log(msg)
+		if @log_prefix
+			@match.log @log_prefix+msg
+		else
+			@match.log msg
+		end
+	end
+end
+
+class Action
+	def Action.[](*args)
+		Action.new *args
+	end
+
+	def initialize(*args)
+		@args = args
+	end
+
+	def name
+		@args[0]
+	end
+
+	def arg(idx)
+		@args[idx + 1]
+	end
+
+	def [](idx)
+		self.arg(idx)
+	end
+
+	def ==(action_name)
+		self.name == action_name
+	end
+end
+
+class AI
+	def initialize(ai_filename)
+		self.load_ai(ai_filename)
+	end
+
+	def load_ai(ai_filename)
+		puts "Loading AI: #{ai_filename}"
+		choose_function_definition = File.open(ai_filename).read()
+		@choose_block = eval("proc{|actions, view|\n#{choose_function_definition}\n}")
+	end
+
+	def choose(*args)
+		@choose_block.call *args
+	end
+end
+
 class Player
 	attr_accessor :deck
 	attr_accessor :hero
 	attr_accessor :hand
+	attr_accessor :player_id
+	attr_accessor :ai
 
-	def initialize(_deck)
+	include Logger
+
+	def initialize(_deck, _ai, _pid)
+		@player_id = _pid
+		@log_prefix = "[Player#{@player_id}]"
 		@deck = Deck.new(_deck)
+		@ai = AI.new(_ai)
 		@hero = @deck.hero
 		@hand = []
 	end
@@ -15,12 +74,50 @@ class Player
 	def draw_card
 		card = @deck.draw
 		@hand << card
+		log "Draw a card: #{card}"
+	end
+
+	def change_hand
+		keeping = []
+		changing = []
+		@hand.each_with_index do |card, idx|
+			result = choose [
+				Action[:keep, card, idx],
+				Action[:change, card, idx],
+			]
+			if result == :keep
+				log "Keep #{card}"
+				keeping << card
+			else
+				log "Change #{card}"
+				changing << card
+			end
+		end
+		@hand = keeping
+		changing.each do |card|
+			@deck.push_card card
+		end
+		@deck.shuffle
+		changing.count.times do
+			draw_card
+		end
+	end
+
+	def choose(actions)
 	end
 end
 
 class Match
 	attr_accessor :players
 	attr_accessor :turn
+	attr_accessor :logs
+	attr_accessor :timing
+
+	def log(msg)
+		txt = "[LOG]#{msg}"
+		logs << txt
+		puts txt
+	end
 
 	def current_player
 		@players[@sub_turn]
@@ -30,20 +127,37 @@ class Match
 		@players[1 - @sub_turn]
 	end
 
-	def initialize(deck1, deck2)
+	def initialize(deck1, ai1, deck2, ai2)
+		@timing = :not_started
+		@logs = []
 		@players = []
-		@players << Player.new(deck1)
-		@players << Player.new(deck2)
+		@players << Player.new(deck1, ai1, 1)
+		@players << Player.new(deck2, ai2, 2)
+		match = self
+		@players.each do |p|
+			p.instance_eval do
+				@match = match
+			end
+		end
 		@game_over = false
 	end
 
 	def prepare_to_start
 		puts "Prepare to start game"
+		@timing = :draw_initial_cards
+		log "Shuffle decks"
+		@players.each do |p|
+			p.deck.shuffle
+		end
 		3.times do
 			current_player.draw_card
 		end
 		4.times do
 			opponent_player.draw_card
+		end
+		@timing = :change_hand
+		@players.each do |p|
+			p.change_hand
 		end
 	end
 
@@ -51,6 +165,7 @@ class Match
 		@turn = 1
 		@sub_turn = 0
 		prepare_to_start
+		log "Match start"
 		main_loop
 	end
 
@@ -99,6 +214,10 @@ class Card
 
 	def Card.card_class_to_type(cc)
 		cc.sub(/.*:/, "").sub(/^Card/, "").gsub(/([a-z])([A-Z])/, "\\1_\\2").downcase
+	end
+
+	def to_s
+		"<#{@name}>"
 	end
 end
 
@@ -158,6 +277,10 @@ class Deck
 		f.close
 	end
 
+	def shuffle
+		@cards.sort_by!{rand}
+	end
+
 	def draw
 		if cards.count > 0
 			@cards.shift
@@ -169,6 +292,10 @@ class Deck
 				@damage = damage
 			end
 		end
+	end
+
+	def push_card(card)
+		@cards.unshift card
 	end
 end
 
@@ -213,8 +340,8 @@ end
 
 CardLoader.new.load_all_cards
 
-match = Match.new("test_deck.txt", "test_deck.txt")
+match = Match.new("test_deck.txt", "always_first.rb", "test_deck.txt", "always_first.rb")
 
 match.start
 
-pp match
+#pp match
