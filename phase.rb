@@ -14,3 +14,17 @@ class PhaseBegin < Phase
 		end
 	end
 end
+
+class PhaseFree < Phase
+	def run
+		@match.instance_eval do
+		end
+	end
+end
+
+class PhaseEnd < Phase
+	def run
+		@match.instance_eval do
+		end
+	end
+end

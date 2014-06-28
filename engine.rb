@@ -33,7 +33,11 @@ class Action
 	end
 
 	def ==(action_name)
-		self.name == action_name
+		self.name.to_s == action_name.to_s
+	end
+
+	def to_s
+		"(#{@args.map{|arg|arg.to_s}.join(",")})"
 	end
 end
 
@@ -45,7 +49,8 @@ class AI
 	def load_ai(ai_filename)
 		puts "Loading AI: #{ai_filename}"
 		choose_function_definition = File.open(ai_filename).read()
-		@choose_block = eval("proc{|actions, view|\n#{choose_function_definition}\n}")
+		#@choose_block = eval("proc{|actions, view|\n#{choose_function_definition}\n}")
+		@choose_block = eval("proc{|*args|\nactions=args[0]\nview=args[1]\n#{choose_function_definition}\n}")
 	end
 
 	def choose(*args)
@@ -104,6 +109,7 @@ class Player
 	end
 
 	def choose(actions)
+		@ai.choose actions, @match
 	end
 end
 
@@ -170,8 +176,12 @@ class Match
 	end
 
 	def main_loop
-		puts "Main loop"
-		PhaseBegin.new(self).run
+		while true
+			PhaseBegin.new(self).run
+			PhaseFree.new(self).run
+			PhaseEnd.new(self).run
+			forward_turn
+		end
 	end
 
 	def forward_turn
@@ -179,6 +189,9 @@ class Match
 		if @sub_turn == 2
 			@sub_turn = 0
 			@turn += 1
+		end
+		if @turn > 200
+			raise "Too many turns"
 		end
 	end
 end
@@ -340,7 +353,7 @@ end
 
 CardLoader.new.load_all_cards
 
-match = Match.new("test_deck.txt", "always_first.rb", "test_deck.txt", "always_first.rb")
+match = Match.new("test_deck.txt", "random_choose.rb", "test_deck.txt", "random_choose.rb")
 
 match.start
 
