@@ -62,10 +62,47 @@ class Player
 	attr_accessor :deck
 	attr_accessor :hero
 	attr_accessor :hand
+	attr_accessor :field
 	attr_accessor :player_id
 	attr_accessor :ai
+	attr_accessor :full_mana
+	attr_accessor :mana
 
 	include Logger
+
+	def to_s
+		"Player#{@player_id}(#{@hero.name})(#{@mana}/#{@full_mana}):hand(#{
+			@hand.map(&:to_s).join(",")
+		}):field(#{
+			@field.map(&:to_s).join(",")
+		})"
+	end
+
+	def mana_grow
+		@full_mana += 1
+		if @full_mana > 10
+			@full_mana = 10
+		end
+	end
+
+	def restore_mana
+		@mana = @full_mana
+	end
+
+	def get_all_actions
+		puts self
+		actions = []
+		actions << Action[:turn_end]
+		actions += @hand.map{|card|
+			card.get_actions_from_hand
+		}.reduce([]){|x, y| x + y}
+		actions += @field.map{|card|
+			card.get_actions_from_field
+		}.reduce([]){|x, y| x + y}
+		actions += @hero.hero_power.get_actions_for_hero_power
+		actions += @hero.get_actions_for_hero
+		actions
+	end
 
 	def initialize(_deck, _ai, _pid)
 		@player_id = _pid
@@ -74,6 +111,7 @@ class Player
 		@ai = AI.new(_ai)
 		@hero = @deck.hero
 		@hand = []
+		@field = []
 	end
 
 	def draw_card
@@ -165,6 +203,12 @@ class Match
 		@players.each do |p|
 			p.change_hand
 		end
+		@players.each do |p|
+			p.full_mana = 0
+		end
+		@players.each do |p|
+			p.hero.hero_power = Card[p.hero.hero_power]
+		end
 	end
 
 	def start
@@ -172,14 +216,24 @@ class Match
 		@sub_turn = 0
 		prepare_to_start
 		log "Match start"
-		main_loop
+		winner = main_loop
 	end
 
 	def main_loop
 		while true
-			PhaseBegin.new(self).run
-			PhaseFree.new(self).run
-			PhaseEnd.new(self).run
+			begin
+				PhaseBegin.new(self).run
+				PhaseFree.new(self).run
+				PhaseEnd.new(self).run
+			rescue LoseGame => lose_game
+				loser_hero = lose_game.hero
+				@players.each do |p|
+					if p.hero != loser_hero
+						return p
+					end
+				end
+			end
+			log "Turn end"
 			forward_turn
 		end
 	end
@@ -232,12 +286,35 @@ class Card
 	def to_s
 		"<#{@name}>"
 	end
+
+	def get_actions_from_hand
+		[]
+	end
+
+	def get_actions_from_field
+		[]
+	end
+end
+
+module HasHealth
+	attr_accessor :health
+
+	def take_damage(damage)
+		@health -= damage
+		if @health <= 0
+			die
+		end
+	end
+
+	def die
+	end
 end
 
 class CardMinion < Card
+	include HasHealth
 	attr_accessor :race
 	attr_accessor :attack
-	attr_accessor :health
+	attr_accessor :summon_sickness
 end
 
 class CardWeapon < Card
@@ -254,9 +331,22 @@ class CardHeroPower < Card
 		@can_put_into_deck = false
 		@cost = 2
 	end
+
+	def get_actions_for_hero_power
+		[]
+	end
+end
+
+class LoseGame < Exception
+	attr_accessor :hero
+
+	def initialize(_hero)
+		@hero = _hero
+	end
 end
 
 class CardHero < Card
+	include HasHealth
 	attr_accessor :hero_power
 
 	def initialize
@@ -264,6 +354,14 @@ class CardHero < Card
 		@can_put_into_deck = false
 		@cost = 0
 		@health = 30
+	end
+
+	def get_actions_for_hero
+		[]
+	end
+
+	def die
+		raise LoseGame.new(self)
 	end
 end
 
@@ -304,6 +402,7 @@ class Deck
 			card.instance_eval do
 				@damage = damage
 			end
+			card
 		end
 	end
 
