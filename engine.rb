@@ -90,7 +90,6 @@ class Player
 	end
 
 	def get_all_actions
-		puts self
 		actions = []
 		actions << Action[:turn_end]
 		actions += @hand.map{|card|
@@ -114,10 +113,18 @@ class Player
 		@field = []
 	end
 
+	def on(card, event)
+		if card.handlers.include? event.to_s
+			@this_card = card
+			self.instance_eval(&(card.handlers[event.to_s]))
+		end
+	end
+
 	def draw_card
 		card = @deck.draw
 		@hand << card
 		log "Draw a card: #{card}"
+		on card, :draw
 	end
 
 	def change_hand
@@ -217,6 +224,7 @@ class Match
 		prepare_to_start
 		log "Match start"
 		winner = main_loop
+		log "Winner is Player#{winner.player_id}"
 	end
 
 	def main_loop
@@ -251,12 +259,14 @@ class Match
 end
 
 class Card
+	include Logger
 	attr_accessor :name
 	attr_accessor :type
 	attr_accessor :rarity
 	attr_accessor :clas
 	attr_accessor :cost
 	attr_accessor :can_put_into_deck
+	attr_accessor :handlers
 
 	@@cards = {}
 
@@ -271,6 +281,7 @@ class Card
 	def initialize
 		@type = Card.card_class_to_type(self.class.to_s).to_sym
 		@can_put_into_deck = true
+		@handlers = {}
 	end
 
 	def Card.type_to_card_class(t)
@@ -427,6 +438,10 @@ class CardLoader
 			define_method m do |v|
 				@product.send "#{m}=", v
 			end
+		end
+
+		def on(event, &block)
+			@product.handlers[event.to_s] = Proc.new(&block)
 		end
 	end
 
