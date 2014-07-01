@@ -108,7 +108,6 @@ class Player
 		}.reduce([]){|x, y| x + y}
 		actions += @hero.hero_power.get_actions_for_hero_power
 		actions += @hero.get_actions_for_hero
-		actions
 	end
 
 	def initialize(_deck, _ai, _pid)
@@ -144,9 +143,13 @@ class Player
 		unless card.owner
 			card.owner = self
 		end
-		@hand << card
 		log "Draw a card: #{card}"
 		on card, :draw
+		@hand << card
+		if @hand.count > 10
+			log "Full hand"
+			@hand[-1].purge
+		end
 	end
 
 	def change_hand
@@ -179,6 +182,8 @@ class Player
 		@ai.choose actions, @match
 	end
 end
+
+require './execute_action'
 
 class Match
 	attr_accessor :players
@@ -266,7 +271,6 @@ class Match
 					end
 				end
 			end
-			log "Turn end"
 			forward_turn
 		end
 	end
@@ -284,7 +288,6 @@ class Match
 end
 
 class Card
-	include Logger
 	attr_accessor :name
 	attr_accessor :type
 	attr_accessor :rarity
@@ -295,6 +298,16 @@ class Card
 	attr_accessor :owner
 
 	@@cards = {}
+
+	def log(msg)
+		@owner.log self.to_s + msg
+	end
+
+	def purge
+		log "Purge"
+		@owner.field.delete self
+		@owner.hand.delete self
+	end
 
 	def Card.[](cn)
 		Card.cards[cn].clone
@@ -324,12 +337,25 @@ class Card
 		"<#{@name}>"
 	end
 
+	def get_cost
+		@cost
+	end
+
 	def get_actions_from_hand
-		[]
+		actions = []
+		if get_cost <= @owner.mana
+			if @owner.field.count < 7 # Max field minion count = 7
+				(@owner.field.count + 1).times do |position|
+					actions << Action[:summon, position]
+				end
+			end
+		end
+		actions
 	end
 
 	def get_actions_from_field
-		[]
+		actions = []
+		actions
 	end
 end
 

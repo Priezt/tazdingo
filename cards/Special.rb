@@ -4,7 +4,8 @@ card "Tired Card" do
 	on :draw do |i|
 		this_card = @this_card
 		damage = this_card.instance_eval{@damage}
-		log "Take #{damage} damages"
+		this_card.log "Take #{damage} damages"
 		@hero.take_damage damage
+		this_card.purge
 	end
 end
