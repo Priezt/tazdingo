@@ -3,10 +3,12 @@ require './phase'
 
 module Logger
 	def log(msg)
-		if @log_prefix
-			@match.log @log_prefix+msg
-		else
-			@match.log msg
+		prefix = @log_prefix || ""
+		full_msg = @log_prefix + msg
+		if @match
+			@match.log full_msg
+		elsif @owner
+			@owner.log full_msg
 		end
 	end
 end
@@ -89,6 +91,12 @@ class Player
 		@mana = @full_mana
 	end
 
+	def build_card(card_name)
+		new_card = Card[card_name]
+		new_card.owner = self
+		new_card
+	end
+
 	def get_all_actions
 		actions = []
 		actions << Action[:turn_end]
@@ -120,8 +128,22 @@ class Player
 		end
 	end
 
+	def set_card_owner
+		@deck.cards.each do |card|
+			card.owner = self
+		end
+		@hand.each do |card|
+			card.owner = self
+		end
+		@hero.owner = self
+		@hero.hero_power.owner = self
+	end
+
 	def draw_card
 		card = @deck.draw
+		unless card.owner
+			card.owner = self
+		end
 		@hand << card
 		log "Draw a card: #{card}"
 		on card, :draw
@@ -216,6 +238,9 @@ class Match
 		@players.each do |p|
 			p.hero.hero_power = Card[p.hero.hero_power]
 		end
+		@players.each do |p|
+			p.set_card_owner
+		end
 	end
 
 	def start
@@ -267,6 +292,7 @@ class Card
 	attr_accessor :cost
 	attr_accessor :can_put_into_deck
 	attr_accessor :handlers
+	attr_accessor :owner
 
 	@@cards = {}
 
