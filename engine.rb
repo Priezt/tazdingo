@@ -72,6 +72,22 @@ class Player
 
 	include Logger
 
+	def get_available_attack_targets
+		targets = []
+		@field.each do |card|
+			targets << card
+		end
+		targets << @hero
+		targets
+	end
+
+	def opponent
+		me = self
+		@match.players.select do |p|
+			p != me
+		end.first
+	end
+
 	def to_s
 		"Player#{@player_id}(#{@hero.name})(#{@mana}/#{@full_mana}):hand(#{
 			@hand.map(&:to_s).join(",")
@@ -85,6 +101,10 @@ class Player
 		if @full_mana > 10
 			@full_mana = 10
 		end
+	end
+
+	def cost(cost_value)
+		@mana -= cost_value
 	end
 
 	def restore_mana
@@ -120,7 +140,7 @@ class Player
 		@field = []
 	end
 
-	def on(card, event)
+	def fire(card, event)
 		if card.handlers.include? event.to_s
 			@this_card = card
 			self.instance_eval(&(card.handlers[event.to_s]))
@@ -144,11 +164,13 @@ class Player
 			card.owner = self
 		end
 		log "Draw a card: #{card}"
-		on card, :draw
-		@hand << card
-		if @hand.count > 10
-			log "Full hand"
-			@hand[-1].purge
+		fire card, :draw
+		if card.name != "Tired Card"
+			@hand << card
+			if @hand.count > 10
+				log "Full hand"
+				@hand[-1].purge
+			end
 		end
 	end
 
@@ -304,7 +326,6 @@ class Card
 	end
 
 	def purge
-		log "Purge"
 		@owner.field.delete self
 		@owner.hand.delete self
 	end
@@ -344,9 +365,11 @@ class Card
 	def get_actions_from_hand
 		actions = []
 		if get_cost <= @owner.mana
-			if @owner.field.count < 7 # Max field minion count = 7
-				(@owner.field.count + 1).times do |position|
-					actions << Action[:summon, position]
+			if @type == :minion
+				if @owner.field.count < 7 # Max field minion count = 7
+					(@owner.field.count + 1).times do |position|
+						actions << Action[:summon, self, position]
+					end
 				end
 			end
 		end
@@ -355,12 +378,20 @@ class Card
 
 	def get_actions_from_field
 		actions = []
+		this_card = self
+		if @type == :minion
+			@targets = @owner.opponent.get_available_attack_targets
+			@targets.each do |target|
+				actions << Action[:attack, this_card, target]
+			end
+		end
 		actions
 	end
 end
 
-module HasHealth
+module Living
 	attr_accessor :health
+	attr_accessor :has_attacked
 
 	def take_damage(damage)
 		@health -= damage
@@ -369,12 +400,26 @@ module HasHealth
 		end
 	end
 
+	def can_attack
+		if @has_attacked
+			false
+		elsif @type == :minion
+			if @summon_sickness
+				false
+			else
+				true
+			end
+		else
+			true
+		end
+	end
+
 	def die
 	end
 end
 
 class CardMinion < Card
-	include HasHealth
+	include Living
 	attr_accessor :race
 	attr_accessor :attack
 	attr_accessor :summon_sickness
@@ -409,7 +454,7 @@ class LoseGame < Exception
 end
 
 class CardHero < Card
-	include HasHealth
+	include Living
 	attr_accessor :hero_power
 
 	def initialize
