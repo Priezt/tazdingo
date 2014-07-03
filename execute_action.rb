@@ -11,7 +11,17 @@ class Player
 		elsif action == :attack
 			source_card = action[0]
 			target_card = action[1]
-			source_card.has_attacked = true
+			battle source_card, target_card
+			source_card.has_attacked += 1
 		end
+	end
+
+	def battle(source, target)
+		source.do_damage target
+		if target.type != :hero
+			target.do_damage source
+		end
+		source.check_death
+		target.check_death
 	end
 end

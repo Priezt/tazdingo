@@ -39,7 +39,7 @@ class Action
 	end
 
 	def to_s
-		"(#{@args.map{|arg|arg.to_s}.join(",")})"
+		"->(#{@args.map{|arg|arg.to_s}.join(",")})"
 	end
 end
 
@@ -380,9 +380,11 @@ class Card
 		actions = []
 		this_card = self
 		if @type == :minion
-			@targets = @owner.opponent.get_available_attack_targets
-			@targets.each do |target|
-				actions << Action[:attack, this_card, target]
+			if can_attack
+				@targets = @owner.opponent.get_available_attack_targets
+				@targets.each do |target|
+					actions << Action[:attack, this_card, target]
+				end
 			end
 		end
 		actions
@@ -395,13 +397,23 @@ module Living
 
 	def take_damage(damage)
 		@health -= damage
+	end
+
+	def do_damage(target_card)
+		target_card.take_damage get_attack
+	end
+
+	def check_death
 		if @health <= 0
 			die
 		end
 	end
 
 	def can_attack
-		if @has_attacked
+		unless @has_attacked
+			@has_attacked = 0
+		end
+		if @has_attacked > 0
 			false
 		elsif @type == :minion
 			if @summon_sickness
@@ -414,7 +426,14 @@ module Living
 		end
 	end
 
+	def get_attack
+		@attack
+	end
+
 	def die
+		@dead = true
+		log "Destroyed"
+		purge
 	end
 end
 
