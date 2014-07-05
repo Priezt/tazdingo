@@ -394,6 +394,7 @@ end
 module Living
 	attr_accessor :health
 	attr_accessor :has_attacked
+	attr_accessor :race
 
 	def take_damage(damage)
 		@health -= damage
@@ -439,7 +440,6 @@ end
 
 class CardMinion < Card
 	include Living
-	attr_accessor :race
 	attr_accessor :attack
 	attr_accessor :summon_sickness
 end
