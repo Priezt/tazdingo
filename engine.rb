@@ -309,6 +309,18 @@ class Match
 	end
 end
 
+class Text
+	attr_accessor :name
+
+	def initialize(_name)
+		@name = _name
+	end
+
+	def ==(n)
+		@name.to_s == n.to_s
+	end
+end
+
 class Card
 	attr_accessor :name
 	attr_accessor :type
@@ -318,8 +330,15 @@ class Card
 	attr_accessor :can_put_into_deck
 	attr_accessor :handlers
 	attr_accessor :owner
+	attr_accessor :texts
 
 	@@cards = {}
+
+	def has_text(n)
+		@texts.any? do |t|
+			t == n
+		end
+	end
 
 	def log(msg)
 		@owner.log self.to_s + msg
@@ -342,6 +361,7 @@ class Card
 		@type = Card.card_class_to_type(self.class.to_s).to_sym
 		@can_put_into_deck = true
 		@handlers = {}
+		@texts = []
 	end
 
 	def Card.type_to_card_class(t)
@@ -417,7 +437,7 @@ module Living
 		if @has_attacked > 0
 			false
 		elsif @type == :minion
-			if @summon_sickness
+			if @summon_sickness and not has_text(:charge)
 				false
 			else
 				true
@@ -556,6 +576,12 @@ class CardLoader
 			end
 		end
 
+		[ :charge, :taunt ].each do |m|
+			define_method m do
+				@product.texts << Text.new(m)
+			end
+		end
+
 		def on(event, &block)
 			@product.handlers[event.to_s] = Proc.new(&block)
 		end
@@ -583,7 +609,7 @@ end
 
 CardLoader.new.load_all_cards
 
-match = Match.new("test_deck.txt", "random_choose.rb", "test_deck.txt", "random_choose.rb")
+match = Match.new("test_deck.txt", "debug.rb", "test_deck.txt", "random_choose.rb")
 
 match.start
 
