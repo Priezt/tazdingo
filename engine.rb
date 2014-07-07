@@ -387,6 +387,12 @@ class Card
 		@texts
 	end
 
+	def remove_text(n)
+		@texts = @texts.select do |t|
+			t != n
+		end
+	end
+
 	def has_text(n)
 		get_texts.any? do |t|
 			t == n
@@ -484,7 +490,12 @@ module Living
 	attr_accessor :race
 
 	def take_damage(damage)
-		@health -= damage
+		if has_text :divine_shield
+			remove_text :divine_shield
+			log "Divine Shield Broken"
+		else
+			@health -= damage
+		end
 	end
 
 	def do_damage(target_card)
@@ -647,7 +658,7 @@ class CardLoader
 			end
 		end
 
-		[ :charge, :taunt, :windfury ].each do |m|
+		[ :charge, :taunt, :windfury, :divine_shield, :stealth ].each do |m|
 			define_method m do
 				@product.texts << Text.new(m)
 			end

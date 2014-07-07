@@ -2,7 +2,7 @@ puts "=" * 50
 puts "Opponent: #{view.opponent_hero.name}(#{view.opponent_hero.health}) - Hand: #{view.opponent_hand}"
 puts "\tField: [#{view.opponent_field.map{|card| card.to_ss}.join ", "}]"
 puts "Player: #{view.hero.name}(#{view.hero.health})"
-puts "\t#Hand: #{view.hand}"
+puts "\tHand: [#{view.hand.map{|card| card.to_s}.join ", "}]"
 puts "\tField: [#{view.field.map{|card| card.to_ss}.join ", "}]"
 puts "=" * 50
 actions.each_with_index do |a, i|

@@ -28,3 +28,23 @@ card "Proto Windfury" do
 	windfury
 end
 
+card "Proto Divine Shield" do
+	type :minion
+	clas :any
+	rarity :normal
+	cost 1
+	attack 1
+	health 2
+	divine_shield
+end
+
+card "Proto Stealth" do
+	type :minion
+	clas :any
+	rarity :normal
+	cost 1
+	attack 1
+	health 2
+	stealth
+end
+
