@@ -112,10 +112,17 @@ class Player
 
 	def get_available_attack_targets
 		targets = []
-		@field.each do |card|
-			targets << card
+		taunts = @field.select do |card|
+			card.has_text :taunt
 		end
-		targets << @hero
+		if taunts.count > 0
+			targets = taunts
+		else
+			@field.each do |card|
+				targets << card
+			end
+			targets << @hero
+		end
 		targets
 	end
 
@@ -495,7 +502,11 @@ module Living
 			@has_attacked = 0
 		end
 		if @has_attacked > 0
-			false
+			if @has_attacked == 1 and has_text :windfury
+				true
+			else
+				false
+			end
 		elsif @type == :minion
 			if @summon_sickness and not has_text(:charge)
 				false
@@ -636,7 +647,7 @@ class CardLoader
 			end
 		end
 
-		[ :charge, :taunt ].each do |m|
+		[ :charge, :taunt, :windfury ].each do |m|
 			define_method m do
 				@product.texts << Text.new(m)
 			end
