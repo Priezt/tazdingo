@@ -60,6 +60,44 @@ class AI
 	end
 end
 
+class PlayerView
+	def initialize(m)
+		@match = m
+	end
+
+	def opponent_hand
+		@match.opponent_player.hand.count
+	end
+
+	def opponent_field
+		@match.opponent_player.field
+	end
+
+	def opponent_deck
+		@match.opponent_player.deck.cards.count
+	end
+
+	def opponent_hero
+		@match.opponent_player.hero
+	end
+
+	def hand
+		@match.current_player.hand
+	end
+
+	def field
+		@match.current_player.field
+	end
+
+	def hero
+		@match.current_player.hero
+	end
+
+	def deck
+		@match.current_player.deck.cards.count
+	end
+end
+
 class Player
 	attr_accessor :deck
 	attr_accessor :hero
@@ -200,8 +238,12 @@ class Player
 		end
 	end
 
+	def get_current_view
+		PlayerView.new @match
+	end
+
 	def choose(actions)
-		@ai.choose actions, @match
+		@ai.choose actions, get_current_view
 	end
 end
 
@@ -334,8 +376,12 @@ class Card
 
 	@@cards = {}
 
+	def get_texts
+		@texts
+	end
+
 	def has_text(n)
-		@texts.any? do |t|
+		get_texts.any? do |t|
 			t == n
 		end
 	end
@@ -376,6 +422,20 @@ class Card
 
 	def to_s
 		"<#{@name}>"
+	end
+
+	def detail
+		""
+	end
+
+	def to_ss
+		"<#{@name}#{
+			if self.is_a? CardMinion
+				"(#{@attack} #{@health})"
+			else
+				""
+			end
+		}>"
 	end
 
 	def get_cost
