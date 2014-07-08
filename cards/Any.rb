@@ -48,3 +48,14 @@ card "Proto Stealth" do
 	stealth
 end
 
+card "Proto Battlecry" do
+	type :minion
+	clas :any
+	rarity :normal
+	cost 1
+	attack 1
+	health 1
+	battlecry {
+		draw_card
+	}
+end

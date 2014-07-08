@@ -114,6 +114,8 @@ class Player
 		targets = []
 		taunts = @field.select do |card|
 			card.has_text :taunt
+		end.select do |card|
+			not card.has_text :stealth
 		end
 		if taunts.count > 0
 			targets = taunts
@@ -122,6 +124,9 @@ class Player
 				targets << card
 			end
 			targets << @hero
+		end
+		targets = targets.select do |card|
+			not card.has_text :stealth
 		end
 		targets
 	end
