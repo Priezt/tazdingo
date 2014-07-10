@@ -8,6 +8,7 @@ class Player
 			@field.insert position, card
 			card.summon_sickness = true
 			fire card, :summon
+			fire card, :battlecry
 		elsif action == :attack
 			source_card = action[0]
 			target_card = action[1]

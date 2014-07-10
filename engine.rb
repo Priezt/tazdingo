@@ -193,6 +193,7 @@ class Player
 	def fire(card, event)
 		if card.handlers.include? event.to_s
 			@this_card = card
+			card.log "respond to: #{event.to_s}"
 			self.instance_eval(&(card.handlers[event.to_s]))
 		end
 	end
@@ -667,6 +668,10 @@ class CardLoader
 			define_method m do
 				@product.texts << Text.new(m)
 			end
+		end
+
+		def battlecry(&block)
+			on :battlecry, &block
 		end
 
 		def on(event, &block)
