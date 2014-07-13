@@ -59,3 +59,13 @@ card "Proto Battlecry" do
 		draw_card
 	}
 end
+
+card "Ability Heal" do
+	type :ability
+	cost 1
+	need {
+		true
+	}
+	act {
+	}
+end

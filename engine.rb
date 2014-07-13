@@ -677,6 +677,12 @@ class CardLoader
 		def on(event, &block)
 			@product.handlers[event.to_s] = Proc.new(&block)
 		end
+
+		def need(&block)
+		end
+
+		def act(&block)
+		end
 	end
 
 	def card(name, &detail)
