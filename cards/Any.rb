@@ -63,8 +63,8 @@ end
 card "Ability Heal" do
 	type :ability
 	cost 1
-	need {
-		true
+	targets {
+		[]
 	}
 	act {
 	}
