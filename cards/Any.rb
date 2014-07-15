@@ -64,8 +64,9 @@ card "Ability Heal" do
 	type :ability
 	cost 1
 	targets {
-		[]
+		all
 	}
-	act {
+	act {|target|
+		heal target, 3
 	}
 end

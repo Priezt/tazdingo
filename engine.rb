@@ -44,7 +44,15 @@ require './match'
 require './deck'
 require './card_loader'
 
-CardLoader.new.load_all_cards
+cl = CardLoader.new
+# the method load seems only eval code in main:Object context
+# DIRTY HACK: add proxy method "card" to main:Object
+self.class.class_eval do
+	define_method :card do |name, &block|
+		cl.card name, &block
+	end
+end
+cl.load_all_cards
 
 match = Match.new("test_deck.txt", "debug.rb", "test_deck.txt", "random_choose.rb")
 match.start

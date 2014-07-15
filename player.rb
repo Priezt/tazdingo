@@ -13,9 +13,9 @@ class Player
 	def get_available_attack_targets
 		targets = []
 		taunts = @field.select do |card|
-			card.has_text :taunt
+			card.has_text? :taunt
 		end.select do |card|
-			not card.has_text :stealth
+			not card.has_text? :stealth
 		end
 		if taunts.count > 0
 			targets = taunts
@@ -26,7 +26,7 @@ class Player
 			targets << @hero
 		end
 		targets = targets.select do |card|
-			not card.has_text :stealth
+			not card.has_text? :stealth
 		end
 		targets
 	end
@@ -90,11 +90,22 @@ class Player
 		@field = []
 	end
 
-	def fire(card, event)
+	def none
+		[:none]
+	end
+
+	def run(card, j, *args)
+		if card.jobs.include? j.to_s
+			@this_card = card
+			self.instance_exec(*args, &(card.jobs[j.to_s]))
+		end
+	end
+
+	def fire(card, event, *args)
 		if card.handlers.include? event.to_s
 			@this_card = card
 			card.log "respond to: #{event.to_s}"
-			self.instance_eval(&(card.handlers[event.to_s]))
+			self.instance_exec(*args, &(card.handlers[event.to_s]))
 		end
 	end
 
@@ -107,22 +118,6 @@ class Player
 		end
 		@hero.owner = self
 		@hero.hero_power.owner = self
-	end
-
-	def draw_card
-		card = @deck.draw
-		unless card.owner
-			card.owner = self
-		end
-		log "Draw a card: #{card}"
-		fire card, :draw
-		if card.name != "Tired Card"
-			@hand << card
-			if @hand.count > 10
-				log "Full hand"
-				@hand[-1].purge
-			end
-		end
 	end
 
 	def change_hand
@@ -159,3 +154,5 @@ class Player
 		@ai.choose actions, get_current_view
 	end
 end
+
+require './effect'

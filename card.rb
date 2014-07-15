@@ -6,6 +6,7 @@ class Card
 	attr_accessor :cost
 	attr_accessor :can_put_into_deck
 	attr_accessor :handlers
+	attr_accessor :jobs
 	attr_accessor :owner
 	attr_accessor :texts
 
@@ -21,7 +22,7 @@ class Card
 		end
 	end
 
-	def has_text(n)
+	def has_text?(n)
 		get_texts.any? do |t|
 			t == n
 		end
@@ -48,6 +49,7 @@ class Card
 		@type = Card.card_class_to_type(self.class.to_s).to_sym
 		@can_put_into_deck = true
 		@handlers = {}
+		@jobs = {}
 		@texts = []
 	end
 
@@ -93,17 +95,21 @@ class Card
 					end
 				end
 			elsif @type == :ability
-				ability_targets = fire :targets
+				ability_targets = run :targets
 				ability_targets.each do |t|
-					actions << Action[:shoot, t]
+					actions << Action[:act, self, t]
 				end
 			end
 		end
 		actions
 	end
 
-	def fire(event)
-		@owner.fire self, event
+	def run(j, *args)
+		@owner.run self, j, *args
+	end
+
+	def fire(event, *args)
+		@owner.fire self, event, *args
 	end
 
 	def get_actions_from_field
@@ -123,11 +129,23 @@ end
 
 module Living
 	attr_accessor :health
+	attr_accessor :original_health
 	attr_accessor :has_attacked
 	attr_accessor :race
 
+	def max_health
+		@original_health
+	end
+
+	def take_heal(points)
+		@health += points
+		if @health > max_health
+			@health = max_health
+		end
+	end
+
 	def take_damage(damage)
-		if has_text :divine_shield
+		if has_text? :divine_shield
 			remove_text :divine_shield
 			log "Divine Shield Broken"
 		else
@@ -150,13 +168,13 @@ module Living
 			@has_attacked = 0
 		end
 		if @has_attacked > 0
-			if @has_attacked == 1 and has_text :windfury
+			if @has_attacked == 1 and has_text? :windfury
 				true
 			else
 				false
 			end
 		elsif @type == :minion
-			if @summon_sickness and not has_text(:charge)
+			if @summon_sickness and not has_text?(:charge)
 				false
 			else
 				true
@@ -212,6 +230,7 @@ class CardHero < Card
 		@can_put_into_deck = false
 		@cost = 0
 		@health = 30
+		@original_health = @health
 	end
 
 	def get_actions_for_hero

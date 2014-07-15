@@ -6,14 +6,21 @@ class Player
 			cost card.get_cost
 			card.purge
 			@field.insert position, card
+			card.original_health = card.health
 			card.summon_sickness = true
 			fire card, :summon
-			fire card, :battlecry
+			run card, :battlecry
 		elsif action == :attack
 			source_card = action[0]
 			target_card = action[1]
 			battle source_card, target_card
 			source_card.has_attacked += 1
+		elsif action == :act
+			card = action[0]
+			target = action[1]
+			cost card.get_cost
+			card.purge
+			run card, :act, target
 		end
 	end
 

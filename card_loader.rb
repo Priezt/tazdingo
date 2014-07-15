@@ -26,9 +26,13 @@ class CardLoader
 			@product.handlers[event.to_s] = Proc.new(&block)
 		end
 
+		def job(j, &block)
+			@product.jobs[j.to_s] = Proc.new(&block)
+		end
+
 		[ :battlecry, :targets, :act ].each do |m|
 			define_method m do |&block|
-				on m, &block
+				job m, &block
 			end
 		end
 	end
@@ -40,15 +44,16 @@ class CardLoader
 		Card.cards[name] = one.product
 	end
 	
-	def load_one_card(cn)
-		puts "Loading card: #{cn}"
-		eval File.open("cards/#{cn}.rb").read()
+	def load_one_card_file(cn)
+		puts "Loading card file: #{cn}"
+		#instance_eval File.open("cards/#{cn}.rb").read()
+		load "cards/#{cn}.rb"
 	end
 
 	def load_all_cards
 		Dir["cards/*.rb"].each do |path|
 			next unless path =~ /\/(\w+)\.rb$/
-			load_one_card $1
+			load_one_card_file $1
 		end
 	end
 end
