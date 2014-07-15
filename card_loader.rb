@@ -35,6 +35,20 @@ class CardLoader
 				job m, &block
 			end
 		end
+
+		def number(*args)
+			if @product.type == :minion
+				cost args[0]
+				attack args[1]
+				health args[2]
+			elsif @product.type == :ability
+				cost args[0]
+			elsif @product.type == :weapon
+				cost args[0]
+			elsif @product.type == :secret
+				cost args[0]
+			end
+		end
 	end
 
 	def card(name, &detail)
