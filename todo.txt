@@ -1,3 +1,4 @@
+armor
 deathrattle
 weapon
 secret
