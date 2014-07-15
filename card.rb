@@ -138,19 +138,25 @@ module Living
 	end
 
 	def take_heal(points)
+		old_health = @health
 		@health += points
 		if @health > max_health
 			@health = max_health
 		end
+		new_health = @health
+		log "healed #{old_health} -> #{new_health}"
 	end
 
 	def take_damage(damage)
+		old_health = @health
 		if has_text? :divine_shield
 			remove_text :divine_shield
 			log "Divine Shield Broken"
 		else
 			@health -= damage
 		end
+		new_health = @health
+		log "damaged #{old_health} -> #{new_health}"
 	end
 
 	def do_damage(target_card)

@@ -19,21 +19,38 @@ class Player
 		end
 	end
 
+	def damage(target, points)
+		target.take_damage points
+		target.check_death
+	end
+end
+
+######################## For target select ########################
+
+class Player
 	def all
 		minions + [self.hero, opponent.hero]
 	end
 
 	def minions
-		my_minions + opponent_minions
+		friend_minions + enemy_minions
 	end
 
-	def my_minions
+	def friend_minions
 		field
 	end
 
-	def opponent_minions
+	def enemy_minions
 		opponent.field.select do |card|
 			not card.has_text? :stealth
 		end
+	end
+
+	def enemy_characters
+		enemy_minions + [opponent.hero]
+	end
+
+	def friend_characters
+		friend_minions + [hero]
 	end
 end

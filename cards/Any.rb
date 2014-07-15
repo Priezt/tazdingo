@@ -58,3 +58,14 @@ card "Ability Heal" do
 		heal target, 3
 	}
 end
+
+card "Ability Damage" do
+	type :ability
+	number 1
+	targets {
+		enemy_characters
+	}
+	act {|target|
+		damage target, 5
+	}
+end
