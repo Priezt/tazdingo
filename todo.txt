@@ -1,3 +1,7 @@
-ability
+deathrattle
 weapon
 secret
+combo
+enrage
+freeze
+silent
