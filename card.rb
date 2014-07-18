@@ -85,25 +85,6 @@ class Card
 		@cost
 	end
 
-	def get_actions_from_hand
-		actions = []
-		if get_cost <= @owner.mana
-			if @type == :minion
-				if @owner.field.count < 7 # Max field minion count = 7
-					(@owner.field.count + 1).times do |position|
-						actions << Action[:summon, self, position]
-					end
-				end
-			elsif @type == :ability
-				ability_targets = run :targets
-				ability_targets.each do |t|
-					actions << Action[:act, self, t]
-				end
-			end
-		end
-		actions
-	end
-
 	def run(j, *args)
 		@owner.run self, j, *args
 	end
@@ -205,14 +186,38 @@ class CardMinion < Card
 	include Living
 	attr_accessor :attack
 	attr_accessor :summon_sickness
+
+	def get_actions_from_hand
+		actions = []
+		if @owner.field.count < 7 # Max field minion count = 7
+			(@owner.field.count + 1).times do |position|
+				actions << Action[:summon, self, position]
+			end
+		end
+		actions
+	end
 end
 
 class CardWeapon < Card
 	attr_accessor :attack
 	attr_accessor :durability
+
+	def get_actions_from_hand
+		actions = []
+		actions << Action[:equip, self]
+		actions
+	end
 end
 
 class CardAbility < Card
+	def get_actions_from_hand
+		actions = []
+		ability_targets = run :targets
+		ability_targets.each do |t|
+			actions << Action[:act, self, t]
+		end
+		actions
+	end
 end
 
 class CardHeroPower < Card
@@ -230,6 +235,8 @@ end
 class CardHero < Card
 	include Living
 	attr_accessor :hero_power
+	attr_accessor :armor
+	attr_accessor :weapon
 
 	def initialize
 		super
@@ -237,6 +244,8 @@ class CardHero < Card
 		@cost = 0
 		@health = 30
 		@original_health = @health
+		@armor = 0
+		@weapon = nil
 	end
 
 	def get_actions_for_hero

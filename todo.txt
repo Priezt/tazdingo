@@ -1,6 +1,5 @@
-armor
-deathrattle
 weapon
+deathrattle
 secret
 combo
 enrage

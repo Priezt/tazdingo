@@ -21,6 +21,11 @@ class Player
 			cost card.get_cost
 			card.purge
 			run card, :act, target
+		elsif action == :equip
+			card = action[0]
+			cost card.get_cost
+			card.purge
+			@hero.equip_weapon card
 		end
 	end
 

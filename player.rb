@@ -71,10 +71,18 @@ class Player
 		actions = []
 		actions << Action[:turn_end]
 		actions += @hand.map{|card|
-			card.get_actions_from_hand
+			if card.get_cost <= card.owner.mana
+				card.get_actions_from_hand
+			else
+				[]
+			end
 		}.reduce([]){|x, y| x + y}
 		actions += @field.map{|card|
-			card.get_actions_from_field
+			if card.get_cost <= card.owner.mana
+				card.get_actions_from_field
+			else
+				[]
+			end
 		}.reduce([]){|x, y| x + y}
 		actions += @hero.hero_power.get_actions_for_hero_power
 		actions += @hero.get_actions_for_hero
@@ -118,6 +126,10 @@ class Player
 		end
 		@hero.owner = self
 		@hero.hero_power.owner = self
+	end
+
+	def equip_weapon(new_weapon)
+		@hero.weapon = new_weapon
 	end
 
 	def change_hand
