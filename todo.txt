@@ -1,3 +1,4 @@
+senario
 aura
 weapon
 deathrattle
