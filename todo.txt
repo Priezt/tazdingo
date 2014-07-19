@@ -1,3 +1,4 @@
+aura
 weapon
 deathrattle
 secret
