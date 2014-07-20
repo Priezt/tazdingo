@@ -1,5 +1,5 @@
+refactor: battlecry to text
 senario
-aura
 weapon
 deathrattle
 secret

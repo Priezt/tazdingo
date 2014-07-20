@@ -3,6 +3,8 @@ class Text
 	attr_accessor :health_buff
 	attr_accessor :attack_buff
 	attr_accessor :cost_buff
+	attr_accessor :targets_proc
+	attr_accessor :buff_text
 
 	def Text.[](_name, &block)
 		Text.new(_name, &block)
@@ -31,6 +33,14 @@ class Text
 
 	def ==(n)
 		@name.to_s == n.to_s
+	end
+
+	def targets(&block)
+		@targets_proc = proc(&block)
+	end
+
+	def buff(&block)
+		@buff_text = Text[:buff, &block]
 	end
 end
 

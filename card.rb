@@ -23,7 +23,18 @@ class Card
 	end
 
 	def get_texts
-		@texts
+		all_cards = [@owner.hero] + @owner.field + [@owner.opponent.hero] + @owner.opponent.field
+		extra_texts = []
+		all_cards.each do |card|
+			card.texts.each do |t|
+				if t == :aura
+					if @owner.instance_eval(&(t.targets_proc)).include? card
+						extra_texts << t.buff_text.clone
+					end
+				end
+			end
+		end
+		@texts + extra_texts
 	end
 
 	def remove_text(n)

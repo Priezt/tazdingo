@@ -72,3 +72,16 @@ card "Proto Powerful" do
 		@attack_buff = 5
 	end
 end
+
+card "Proto Aura" do
+	type :minion
+	number 1, 1, 1
+	add_text :aura do
+		targets {
+			friend_minions
+		}
+		buff {
+			@attack_buff = 2
+		}
+	end
+end
