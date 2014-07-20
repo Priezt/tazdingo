@@ -18,8 +18,12 @@ class CardLoader
 
 		[ :charge, :taunt, :windfury, :divine_shield, :stealth ].each do |m|
 			define_method m do
-				@product.texts << Text.new(m)
+				@product.texts << Text[m]
 			end
+		end
+
+		def add_text(text_name, &block)
+			@product.texts << Text[text_name, &block]
 		end
 
 		def on(event, &block)

@@ -20,18 +20,7 @@ class LoseGame < Exception
 	end
 end
 
-class Text
-	attr_accessor :name
-
-	def initialize(_name)
-		@name = _name
-	end
-
-	def ==(n)
-		@name.to_s == n.to_s
-	end
-end
-
+require './text'
 require './phase'
 require './ai'
 require './action'

@@ -12,6 +12,16 @@ class Card
 
 	@@cards = {}
 
+	alias old_clone clone
+
+	def clone
+		new_card = self.old_clone
+		new_card.texts = self.texts.map do |t|
+			t.clone
+		end
+		new_card
+	end
+
 	def get_texts
 		@texts
 	end
@@ -51,6 +61,7 @@ class Card
 		@handlers = {}
 		@jobs = {}
 		@texts = []
+		@rarity = :normal
 	end
 
 	def Card.type_to_card_class(t)
@@ -74,7 +85,7 @@ class Card
 	def to_ss
 		"<#{@name}#{
 			if self.is_a? CardMinion
-				"(#{@attack} #{@health})"
+				"(#{get_attack} #{get_health})"
 			else
 				""
 			end
@@ -115,7 +126,14 @@ module Living
 	attr_accessor :race
 
 	def max_health
-		@original_health
+		health_buff = get_texts.map {|t|
+			if t == :buff
+				t.health_buff || 0
+			else
+				0
+			end
+		}.reduce(0){|x, y| x + y}
+		@original_health + health_buff
 	end
 
 	def take_heal(points)
@@ -128,15 +146,23 @@ module Living
 		log "healed #{old_health} -> #{new_health}"
 	end
 
-	def take_damage(damage)
-		old_health = @health
+	def take_damage(_damage)
+		damage = _damage
+		old_health = get_health
 		if has_text? :divine_shield
 			remove_text :divine_shield
 			log "Divine Shield Broken"
 		else
+			get_texts.each do |t|
+				if damage > 0 and t == :buff and t.health > 0
+					this_damage = [damage, t.health].min
+					t.health -= this_damage
+					damage -= this_damage
+				end
+			end
 			@health -= damage
 		end
-		new_health = @health
+		new_health = get_health
 		log "damaged #{old_health} -> #{new_health}"
 	end
 
@@ -145,7 +171,7 @@ module Living
 	end
 
 	def check_death
-		if @health <= 0
+		if get_health <= 0
 			die
 		end
 	end
@@ -172,7 +198,25 @@ module Living
 	end
 
 	def get_attack
-		@attack
+		attack_buff = get_texts.map {|t|
+			if t == :buff
+				t.attack_buff || 0
+			else
+				0
+			end
+		}.reduce(0){|x, y| x + y}
+		@attack + attack_buff
+	end
+
+	def get_health
+		health_buff = get_texts.map {|t|
+			if t == :buff
+				t.health
+			else
+				0
+			end
+		}.reduce(0){|x, y| x + y}
+		@health + health_buff
 	end
 
 	def die

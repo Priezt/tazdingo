@@ -1,7 +1,6 @@
 card "Proto Charge" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 2
 	charge
 end
@@ -9,7 +8,6 @@ end
 card "Proto Taunt" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 2
 	taunt
 end
@@ -17,7 +15,6 @@ end
 card "Proto Windfury" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 2
 	windfury
 end
@@ -25,7 +22,6 @@ end
 card "Proto Divine Shield" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 2
 	divine_shield
 end
@@ -33,7 +29,6 @@ end
 card "Proto Stealth" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 2
 	stealth
 end
@@ -41,7 +36,6 @@ end
 card "Proto Battlecry" do
 	type :minion
 	clas :any
-	rarity :normal
 	number 1, 1, 1
 	battlecry {
 		draw_card
@@ -68,4 +62,13 @@ card "Ability Damage" do
 	act {|target|
 		damage target, 5
 	}
+end
+
+card "Proto Powerful" do
+	type :minion
+	number 1, 1, 1
+	add_text :buff do
+		@health_buff = 5
+		@attack_buff = 5
+	end
 end
