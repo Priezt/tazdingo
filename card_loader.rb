@@ -10,7 +10,7 @@ class CardLoader
 			@product.can_put_into_deck = false
 		end
 
-		[ :clas, :rarity, :cost, :attack, :health, :hero_power ].each do |m|
+		[ :clas, :rarity, :cost, :attack, :health, :hero_power, :durability ].each do |m|
 			define_method m do |v|
 				@product.send "#{m}=", v
 			end
@@ -55,6 +55,8 @@ class CardLoader
 				cost args[0]
 			elsif @product.type == :weapon
 				cost args[0]
+				attack args[1]
+				durability args[2]
 			elsif @product.type == :secret
 				cost args[0]
 			end

@@ -1,8 +1,9 @@
+temp text
 senario
-weapon
 deathrattle
 secret
 combo
 enrage
 freeze
 silent
+event trigger steps

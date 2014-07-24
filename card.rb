@@ -119,7 +119,7 @@ class Card
 		actions = []
 		this_card = self
 		if @type == :minion
-			if can_attack
+			if can_attack?
 				@targets = @owner.opponent.get_available_attack_targets
 				@targets.each do |target|
 					actions << Action[:attack, this_card, target]
@@ -187,7 +187,7 @@ module Living
 		end
 	end
 
-	def can_attack
+	def can_attack?
 		unless @has_attacked
 			@has_attacked = 0
 		end
@@ -262,6 +262,13 @@ class CardWeapon < Card
 		actions << Action[:equip, self]
 		actions
 	end
+
+	def reduce_durability
+		@durability -= 1
+		if @durability <= 0
+			@owner.hero.weapon = nil
+		end
+	end
 end
 
 class CardAbility < Card
@@ -303,8 +310,30 @@ class CardHero < Card
 		@weapon = nil
 	end
 
+	def can_attack?
+		get_attack > 0
+	end
+
+	def get_attack
+		total_attack = 0
+		if @weapon
+			total_attack += @weapon.attack
+		end
+		total_attack
+	end
+
+	def equip_weapon(card)
+		@weapon = card
+	end
+
 	def get_actions_for_hero
-		[]
+		actions = []
+		if can_attack?
+			@owner.opponent.get_available_attack_targets.each do |target|
+				actions << Action[:attack, self, target]
+			end
+		end
+		actions
 	end
 
 	def die

@@ -34,6 +34,9 @@ class Player
 		if target.type != :hero
 			target.do_damage source
 		end
+		if source.type == :hero and source.weapon
+			source.weapon.reduce_durability
+		end
 		source.check_death
 		target.check_death
 	end

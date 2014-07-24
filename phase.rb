@@ -14,6 +14,7 @@ class PhaseBegin < Phase
 			current_player.mana_grow
 			current_player.restore_mana
 			current_player.draw_card
+			current_player.hero.has_attacked = 0
 			current_player.field.each do |card|
 				card.has_attacked = 0
 				card.summon_sickness = false

@@ -85,3 +85,8 @@ card "Proto Aura" do
 		}
 	end
 end
+
+card "Weapon 1" do
+	type :weapon
+	number 1, 5, 2
+end
