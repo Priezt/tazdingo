@@ -5,9 +5,16 @@ class Text
 	attr_accessor :cost_buff
 	attr_accessor :targets_proc
 	attr_accessor :buff_text
+	attr_accessor :action_proc
 
 	def Text.[](_name, &block)
 		Text.new(_name, &block)
+	end
+
+	def Text.action(_name, &block)
+		new_text = Text.new(_name)
+		new_text.action_proc = proc(&block);
+		new_text
 	end
 
 	def health

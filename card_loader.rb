@@ -34,9 +34,15 @@ class CardLoader
 			@product.jobs[j.to_s] = Proc.new(&block)
 		end
 
-		[ :battlecry, :targets, :act ].each do |m|
+		[ :targets, :act ].each do |m| # For Ability
 			define_method m do |&block|
 				job m, &block
+			end
+		end
+
+		[ :battlecry, :deathrattle ].each do |m|
+			define_method m do |&block|
+				@product.texts << Text.action(m, &block)
 			end
 		end
 

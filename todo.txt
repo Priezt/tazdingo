@@ -1,4 +1,3 @@
-refactor: battlecry to text
 senario
 weapon
 deathrattle

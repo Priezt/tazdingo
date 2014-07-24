@@ -9,7 +9,7 @@ class Player
 			card.original_health = card.health
 			card.summon_sickness = true
 			fire card, :summon
-			run card, :battlecry
+			do_action card, :battlecry
 		elsif action == :attack
 			source_card = action[0]
 			target_card = action[1]

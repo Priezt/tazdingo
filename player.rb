@@ -102,7 +102,15 @@ class Player
 		[:none]
 	end
 
-	def run(card, j, *args)
+	def do_action(card, action_name)
+		card.texts.select do |t|
+			t == action_name
+		end.each do |t|
+			self.instance_exec(&(t.action_proc))
+		end
+	end
+
+	def run(card, j, *args) # run jobs
 		if card.jobs.include? j.to_s
 			@this_card = card
 			self.instance_exec(*args, &(card.jobs[j.to_s]))
