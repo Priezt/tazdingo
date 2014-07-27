@@ -14,6 +14,15 @@ class Card
 
 	alias old_clone clone
 
+	def cleanup_text(timing)
+		texts.clone.select do |t|
+			t == :cleaner and t.clean_timing == timing
+		end.each do |t|
+			texts.delete t.text_to_clean
+			texts.delete t
+		end
+	end
+
 	def clone
 		new_card = self.old_clone
 		new_card.texts = self.texts.map do |t|

@@ -90,3 +90,15 @@ card "Weapon 1" do
 	type :weapon
 	number 1, 5, 2
 end
+
+card "Proto Temp Text" do
+	type :minion
+	number 1, 2, 2
+	battlecry do
+		this_card = @this_card
+		assign_temp_text this_card, Text.new(:buff){
+			@health_buff = 5
+			@attack_buff = 5
+		}, :end
+	end
+end

@@ -1,10 +1,18 @@
 Jaina Proudmoore
-Proto Charge
-Proto Charge
-Proto Charge
-Proto Charge
-Proto Charge
-Proto Charge
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
+Proto Temp Text
 Proto Battlecry
 Proto Battlecry
 Proto Battlecry
@@ -12,14 +20,6 @@ Proto Battlecry
 Proto Battlecry
 Proto Battlecry
 Proto Battlecry
-Proto Battlecry
-Proto Battlecry
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
 Weapon 1
 Weapon 1
 Weapon 1

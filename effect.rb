@@ -23,6 +23,16 @@ class Player
 		target.take_damage points
 		target.check_death
 	end
+
+	def assign_text(target, text)
+		target.texts << text
+	end
+
+	def assign_temp_text(target, text, clean_timing)
+		assign_text(target, text)
+		cleaner_text = Text.cleaner(text, clean_timing)
+		assign_text(target, cleaner_text)
+	end
 end
 
 ######################## For target select ########################

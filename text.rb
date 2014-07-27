@@ -6,6 +6,8 @@ class Text
 	attr_accessor :targets_proc
 	attr_accessor :buff_text
 	attr_accessor :action_proc
+	attr_accessor :text_to_clean
+	attr_accessor :clean_timing
 
 	def Text.[](_name, &block)
 		Text.new(_name, &block)
@@ -14,6 +16,13 @@ class Text
 	def Text.action(_name, &block)
 		new_text = Text.new(_name)
 		new_text.action_proc = proc(&block);
+		new_text
+	end
+
+	def Text.cleaner(text_to_clean, clean_timing)
+		new_text = Text.new(:cleaner)
+		new_text.text_to_clean = text_to_clean
+		new_text.clean_timing = clean_timing
 		new_text
 	end
 

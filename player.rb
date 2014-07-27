@@ -106,6 +106,7 @@ class Player
 		card.texts.select do |t|
 			t == action_name
 		end.each do |t|
+			@this_card = card
 			self.instance_exec(&(t.action_proc))
 		end
 	end

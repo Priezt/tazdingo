@@ -48,5 +48,13 @@ class PhaseEnd < Phase
 			end
 			current_player.log "Turn end"
 		end
+		@match.players.each do |player|
+			(player.field + player.hand + [player.hero]).each do |card|
+				card.cleanup_text :end
+			end
+			if player.hero.weapon
+				player.hero.weapon.cleanup_text :end
+			end
+		end
 	end
 end
