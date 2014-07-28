@@ -172,7 +172,11 @@ class Player
 	end
 
 	def choose(actions)
-		@ai.choose actions, get_current_view
+		if actions.count == 0
+			nil
+		else
+			@ai.choose actions, get_current_view
+		end
 	end
 end
 

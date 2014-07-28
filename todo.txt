@@ -1,4 +1,3 @@
-choose target
 senario
 deathrattle
 secret

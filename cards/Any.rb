@@ -102,3 +102,17 @@ card "Proto Temp Text" do
 		}, :end
 	end
 end
+
+card "Proto Fire Element" do
+	type :minion
+	number 1, 6, 5
+	battlecry do
+		this_card = @this_card
+		target_action = choose all.select{|card| card != this_card}.map{|card|
+			Action[:target, card]
+		}
+		if target_action
+			damage target_action[0], 3
+		end
+	end
+end

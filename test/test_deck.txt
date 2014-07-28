@@ -1,18 +1,24 @@
 Jaina Proudmoore
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
-Proto Temp Text
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
+Proto Fire Element
 Proto Battlecry
 Proto Battlecry
 Proto Battlecry
@@ -20,12 +26,6 @@ Proto Battlecry
 Proto Battlecry
 Proto Battlecry
 Proto Battlecry
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
-Weapon 1
 Weapon 1
 Weapon 1
 Weapon 1
