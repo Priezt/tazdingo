@@ -95,7 +95,6 @@ card "Proto Temp Text" do
 	type :minion
 	number 1, 2, 2
 	battlecry do
-		this_card = @this_card
 		assign_temp_text this_card, Text.new(:buff){
 			@health_buff = 5
 			@attack_buff = 5
@@ -107,7 +106,6 @@ card "Proto Fire Element" do
 	type :minion
 	number 1, 6, 5
 	battlecry do
-		this_card = @this_card
 		target_action = choose all.select{|card| card != this_card}.map{|card|
 			Action[:target, card]
 		}

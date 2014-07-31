@@ -96,33 +96,49 @@ class Player
 		@hero = @deck.hero
 		@hand = []
 		@field = []
+		@this_card_stack = []
 	end
 
 	def none
 		[:none]
 	end
 
+	def push_this_card(card)
+		@this_card_stack.push card
+	end
+
+	def pop_this_card
+		@this_card_stack.pop
+	end
+
+	def this_card
+		@this_card_stack.last
+	end
+
 	def do_action(card, action_name)
 		card.texts.select do |t|
 			t == action_name
 		end.each do |t|
-			@this_card = card
+			push_this_card card
 			self.instance_exec(&(t.action_proc))
+			pop_this_card
 		end
 	end
 
 	def run(card, j, *args) # run jobs
 		if card.jobs.include? j.to_s
-			@this_card = card
+			push_this_card card
 			self.instance_exec(*args, &(card.jobs[j.to_s]))
+			pop_this_card
 		end
 	end
 
 	def fire(card, event, *args)
 		if card.handlers.include? event.to_s
-			@this_card = card
+			push_this_card card
 			card.log "respond to: #{event.to_s}"
 			self.instance_exec(*args, &(card.handlers[event.to_s]))
+			pop_this_card
 		end
 	end
 
