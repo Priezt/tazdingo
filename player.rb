@@ -156,10 +156,6 @@ class Player
 		@hero.hero_power.owner = self
 	end
 
-	def equip_weapon(new_weapon)
-		@hero.weapon = new_weapon
-	end
-
 	def change_hand
 		keeping = []
 		changing = []

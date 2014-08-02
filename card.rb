@@ -285,7 +285,7 @@ class CardAbility < Card
 		actions = []
 		ability_targets = run :targets
 		ability_targets.each do |t|
-			actions << Action[:act, self, t]
+			actions << Action[:cast, self, t]
 		end
 		actions
 	end
@@ -329,10 +329,6 @@ class CardHero < Card
 			total_attack += @weapon.attack
 		end
 		total_attack
-	end
-
-	def equip_weapon(card)
-		@weapon = card
 	end
 
 	def get_actions_for_hero

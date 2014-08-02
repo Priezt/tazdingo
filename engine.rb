@@ -12,6 +12,9 @@ module Logger
 	end
 end
 
+class SenarioComplete < Exception
+end
+
 class LoseGame < Exception
 	attr_accessor :hero
 

@@ -3,6 +3,51 @@ class Player
 		target.take_heal points
 	end
 
+	def equip(new_weapon)
+		cost card.get_cost
+		card.purge
+		@hero.weapon = new_weapon
+	end
+
+	def cast(card, target)
+		cost card.get_cost
+		card.purge
+		run card, :act, target
+	end
+
+	def battle(source, target)
+		source.do_damage target
+		if target.type != :hero
+			target.do_damage source
+		end
+		if source.type == :hero and source.weapon
+			source.weapon.reduce_durability
+		end
+		source.check_death
+		target.check_death
+		source.has_attacked += 1
+	end
+
+	def put_at_last(card)
+		put_at card, @field.count
+	end
+
+	alias put_at_right put_at_last
+
+	def put_at(card, position)
+		card.purge
+		@field.insert position, card
+		card.original_health = card.health
+		card.summon_sickness = true
+		fire card, :summon
+	end
+
+	def summon(card, position)
+		cost card.get_cost
+		put_at card, position
+		do_action card, :battlecry
+	end
+
 	def draw_card
 		card = @deck.draw
 		unless card.owner

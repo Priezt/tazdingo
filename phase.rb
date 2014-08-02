@@ -11,9 +11,16 @@ class PhaseBegin < Phase
 	def run
 		@match.instance_eval do
 			current_player.log "Turn Start: #{turn}"
-			current_player.mana_grow
+			unless in_senario?
+				current_player.mana_grow
+			else
+				current_player.full_mana = @player1_mana
+				opponent_player.full_mana = @player2_mana
+			end
 			current_player.restore_mana
-			current_player.draw_card
+			unless in_senario?
+				current_player.draw_card
+			end
 			current_player.hero.has_attacked = 0
 			current_player.field.each do |card|
 				card.has_attacked = 0

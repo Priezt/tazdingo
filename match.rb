@@ -42,42 +42,33 @@ class Match
 	end
 
 	def prepare_to_start
-		puts "Prepare to start game"
-		@timing = :draw_initial_cards
-		unless in_senario?
-			log "Shuffle decks"
-			@players.each do |p|
-				p.deck.shuffle
-			end
-			3.times do
-				current_player.draw_card
-			end
-			4.times do
-				opponent_player.draw_card
-			end
-			@timing = :change_hand
-			@players.each do |p|
-				p.change_hand
-			end
-		else
-			[1,2].each do |n|
-				@players[n - 1].each do |p|
-					eval("@player#{n}_field").times do
-						p.draw_card
-					end
-					eval("@player#{n}_hand").times do
-						p.draw_card
-					end
-				end
-			end
+		before_prepare
+		log "Shuffle decks"
+		@players.each do |p|
+			p.deck.shuffle
 		end
+		3.times do
+			current_player.draw_card
+		end
+		4.times do
+			opponent_player.draw_card
+		end
+		@timing = :change_hand
+		@players.each do |p|
+			p.change_hand
+		end
+		after_prepare
+	end
+
+	def before_prepare
+		log "Prepare to start game"
+		@timing = :draw_initial_cards
+	end
+
+	def after_prepare
 		@players.each do |p|
 			p.full_mana = 0
-		end
-		@players.each do |p|
 			p.hero.hero_power = Card[p.hero.hero_power]
-		end
-		@players.each do |p|
 			p.set_card_owner
 		end
 	end
@@ -104,6 +95,8 @@ class Match
 						return p
 					end
 				end
+			rescue SenarioComplete => senario_complete
+				return current_player
 			end
 			forward_turn
 		end

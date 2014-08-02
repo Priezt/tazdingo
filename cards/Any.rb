@@ -1,3 +1,9 @@
+card "Proto Blank" do
+	type :minion
+	clas :any
+	number 1, 1, 1
+end
+
 card "Proto Charge" do
 	type :minion
 	clas :any

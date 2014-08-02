@@ -14,17 +14,33 @@ class Senario < Match
 		super ",senario_deck_1.tmp", @ai_proc, ",senario_deck_2.tmp", "test/always_first.rb"
 	end
 
+	def prepare_to_start
+		before_prepare
+		[1,2].each do |n|
+			p = @players[n - 1]
+			eval("@player#{n}_field").count.times do
+				p.draw_card
+				card = p.hand[0]
+				p.put_at_last card
+			end
+			eval("@player#{n}_hand").count.times do
+				p.draw_card
+			end
+		end
+		after_prepare
+	end
+
 	def set_defaults
 		@player1_hero = "Jaina Proudmoore"
 		@player1_hand = []
 		@player1_field = []
-		@player1_deck = []
-		@player1_mana = 5
+		@player1_deck = ["Proto Blank"] * 5
+		@player1_mana = 10
 		@player2_hero = "Jaina Proudmoore"
 		@player2_hand = []
 		@player2_field = []
-		@player2_deck = []
-		@player2_mana = 5
+		@player2_deck = ["Proto Blank"] * 5
+		@player2_mana = 10
 	end
 
 	def Senario.run(&block)
@@ -32,7 +48,12 @@ class Senario < Match
 		senario.run
 	end
 
+	def name(senario_name)
+		@senario_name = senario_name
+	end
+
 	def run
+		log "Senario: #{@senario_name}"
 		start
 	end
 
@@ -68,8 +89,15 @@ class Senario < Match
 		@player2_deck = cards
 	end
 
-	def ai(&block)
-		@ai_proc = proc(&block)
+	def ai(procs)
+		ai_procs = procs
+		@ai_proc = proc{|*args|
+			ai_proc = ai_procs.shift
+			unless ai_proc
+				raise SenarioComplete.new
+			end
+			ai_proc.call *args
+		}
 	end
 
 	def player_mana(mana)
