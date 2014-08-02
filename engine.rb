@@ -43,5 +43,6 @@ self.class.class_eval do
 end
 cl.load_all_cards
 
-match = Match.new("test/test_deck.txt", "debug.rb", "test/test_deck.txt", "test/random_choose.rb")
-match.start
+#match = Match.new("test/test_deck.txt", "debug.rb", "test/test_deck.txt", "test/random_choose.rb")
+#match.start
+

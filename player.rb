@@ -120,16 +120,18 @@ class Player
 			t == action_name
 		end.each do |t|
 			push_this_card card
-			self.instance_exec(&(t.action_proc))
+			result = self.instance_exec(&(t.action_proc))
 			pop_this_card
+			result
 		end
 	end
 
 	def run(card, j, *args) # run jobs
 		if card.jobs.include? j.to_s
 			push_this_card card
-			self.instance_exec(*args, &(card.jobs[j.to_s]))
+			result = self.instance_exec(*args, &(card.jobs[j.to_s]))
 			pop_this_card
+			result
 		end
 	end
 
@@ -137,8 +139,9 @@ class Player
 		if card.handlers.include? event.to_s
 			push_this_card card
 			card.log "respond to: #{event.to_s}"
-			self.instance_exec(*args, &(card.handlers[event.to_s]))
+			result = self.instance_exec(*args, &(card.handlers[event.to_s]))
 			pop_this_card
+			result
 		end
 	end
 

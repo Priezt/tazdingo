@@ -1,6 +1,11 @@
 class AI
 	def initialize(ai_filename)
-		self.load_ai(ai_filename)
+		if ai_filename.is_a? String
+			self.load_ai(ai_filename)
+		else
+			choose_proc = ai_filename
+			@choose_block = choose_proc
+		end
 	end
 
 	def load_ai(ai_filename)

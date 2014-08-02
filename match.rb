@@ -4,6 +4,14 @@ class Match
 	attr_accessor :logs
 	attr_accessor :timing
 
+	def in_senario?
+		if @in_senario
+			true
+		else
+			false
+		end
+	end
+
 	def log(msg)
 		txt = "[LOG]#{msg}"
 		logs << txt
@@ -36,19 +44,32 @@ class Match
 	def prepare_to_start
 		puts "Prepare to start game"
 		@timing = :draw_initial_cards
-		log "Shuffle decks"
-		@players.each do |p|
-			p.deck.shuffle
-		end
-		3.times do
-			current_player.draw_card
-		end
-		4.times do
-			opponent_player.draw_card
-		end
-		@timing = :change_hand
-		@players.each do |p|
-			p.change_hand
+		unless in_senario?
+			log "Shuffle decks"
+			@players.each do |p|
+				p.deck.shuffle
+			end
+			3.times do
+				current_player.draw_card
+			end
+			4.times do
+				opponent_player.draw_card
+			end
+			@timing = :change_hand
+			@players.each do |p|
+				p.change_hand
+			end
+		else
+			[1,2].each do |n|
+				@players[n - 1].each do |p|
+					eval("@player#{n}_field").times do
+						p.draw_card
+					end
+					eval("@player#{n}_hand").times do
+						p.draw_card
+					end
+				end
+			end
 		end
 		@players.each do |p|
 			p.full_mana = 0
