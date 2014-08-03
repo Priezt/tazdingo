@@ -28,7 +28,7 @@ end
 card "Proto Divine Shield" do
 	type :minion
 	clas :any
-	number 1, 1, 2
+	number 1, 1, 1
 	divine_shield
 end
 
