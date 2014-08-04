@@ -100,6 +100,8 @@ class Senario < Match
 		}
 	end
 
+	alias steps ai
+
 	def player_mana(mana)
 		@player1_mana = mana
 	end

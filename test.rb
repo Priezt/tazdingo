@@ -26,6 +26,12 @@ class Array
 		end
 	end
 
+	def summon
+		self.select do |action|
+			action == :summon
+		end
+	end
+
 	def target_minion
 		self.select do |action|
 			action[1].type == :minion
@@ -33,7 +39,11 @@ class Array
 	end
 
 	def attack_minion
-		self.attack.target_minion
+		self.attack.target_minion.first
+	end
+
+	def summon_minion
+		self.summon.first
 	end
 end
 
@@ -49,20 +59,12 @@ test "Charge" do
 	player_hand [
 		"Proto Charge",
 	]
-	ai [
+	steps [
 		proc{|actions, view|
-			summon_action = actions.select{|action|
-				action == :summon
-			}.select{|action|
-				action[0].name == "Proto Charge"
-			}.first
+			actions.summon_minion
 		},
 		proc{|actions, view|
-			assert actions.select{|action|
-				action == :attack
-			}.select{|action|
-				action[0].name == "Proto Charge"
-			}.count > 0, "Minion with charge cannot attack"
+			assert actions.attack.count > 0, "Minion with charge cannot attack"
 			finish
 		}
 	]
@@ -79,11 +81,7 @@ test "Taunt" do
 	]
 	ai [
 		proc{|actions, view|
-			assert actions.select{|action|
-				action == :attack
-			}.select{|action|
-				action[1].name == "Proto Charge"
-			}.count == 0, "Taunt does not take effect"
+			assert actions.attack.count == 1, "Taunt does not take effect"
 			finish
 		}
 	]
@@ -95,14 +93,10 @@ test "Windfury" do
 	]
 	ai [
 		proc{|actions, view|
-			actions.select{|action|
-				action == :attack
-			}.first
+			actions.attack_minion
 		},
 		proc{|actions, view|
-			assert actions.select{|action|
-				action == :attack
-			}.count > 0, "Windfury cannot attack twice"
+			assert actions.attack.count > 0, "Windfury cannot attack twice"
 			finish
 		},
 	]
@@ -111,20 +105,17 @@ end
 test "Divine Shield" do
 	player_field [
 		"Proto Charge",
+		"Proto Charge",
 	]
 	opponent_field [
 		"Proto Divine Shield"
 	]
 	ai [
 		proc{|actions, view|
-			actions.select{|action|
-				action == :attack
-			}.first
+			actions.attack_minion
 		},
 		proc{|actions, view|
-			assert actions.select{|action|
-				action == :attack
-			}.count > 0, "Windfury cannot attack twice"
+			assert actions.attack_minion, "Divine Shield does not work"
 			finish
 		},
 	]
