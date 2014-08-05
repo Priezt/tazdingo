@@ -1,3 +1,4 @@
+tests
 deathrattle
 secret
 combo

@@ -27,6 +27,9 @@ class Senario < Match
 				p.draw_card
 			end
 		end
+		if @init_proc
+			current_player.instance_eval(&(@init_proc))
+		end
 		after_prepare
 	end
 
@@ -108,5 +111,9 @@ class Senario < Match
 
 	def opponent_mana(mana)
 		@player2_mana = mana
+	end
+
+	def init(&block)
+		@init_proc = proc(&block)
 	end
 end

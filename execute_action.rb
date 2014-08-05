@@ -15,6 +15,9 @@ class Player
 		elsif action == :equip
 			card = action[0]
 			equip card
+		elsif action == :turn_end
+		else
+			puts "Unknown action: #{action}"
 		end
 	end
 end

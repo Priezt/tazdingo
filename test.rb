@@ -38,8 +38,18 @@ class Array
 		end
 	end
 
+	def target_hero
+		self.select do |action|
+			action[1].type == :hero
+		end
+	end
+
 	def attack_minion
 		self.attack.target_minion.first
+	end
+
+	def attack_hero
+		self.attack.target_hero.first
 	end
 
 	def summon_minion
@@ -91,9 +101,12 @@ test "Windfury" do
 	player_field [
 		"Proto Windfury",
 	]
+	init {
+		assign_text field[0], Text[:charge]
+	}
 	ai [
 		proc{|actions, view|
-			actions.attack_minion
+			actions.attack_hero
 		},
 		proc{|actions, view|
 			assert actions.attack.count > 0, "Windfury cannot attack twice"
@@ -116,6 +129,39 @@ test "Divine Shield" do
 		},
 		proc{|actions, view|
 			assert actions.attack_minion, "Divine Shield does not work"
+			finish
+		},
+	]
+end
+
+test "Stealth" do
+	player_field [
+		"Proto Charge",
+	]
+	opponent_field [
+		"Proto Stealth"
+	]
+	ai [
+		proc{|actions, view|
+			assert (not actions.attack_minion), "Can still attack a minion with stealth"
+			finish
+		},
+	]
+end
+
+test "Battlecry" do
+	player_hand [
+		"Proto Battlecry",
+	]
+	player_deck [
+		"Proto Battlecry",
+	]
+	ai [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.summon_minion, "Battlecry not fired"
 			finish
 		},
 	]
