@@ -20,15 +20,11 @@ class Senario
 end
 
 class Array
-	def attack
-		self.select do |action|
-			action == :attack
-		end
-	end
-
-	def summon
-		self.select do |action|
-			action == :summon
+	[ :summon, :attack, :cast, :equip].each do |m|
+		define_method m do
+			self.select do |action|
+				action == m
+			end
 		end
 	end
 
@@ -89,7 +85,7 @@ test "Taunt" do
 		"Proto Charge",
 		"Proto Taunt",
 	]
-	ai [
+	steps [
 		proc{|actions, view|
 			assert actions.attack.count == 1, "Taunt does not take effect"
 			finish
@@ -104,7 +100,7 @@ test "Windfury" do
 	init {
 		assign_text field[0], Text[:charge]
 	}
-	ai [
+	steps [
 		proc{|actions, view|
 			actions.attack_hero
 		},
@@ -123,7 +119,7 @@ test "Divine Shield" do
 	opponent_field [
 		"Proto Divine Shield"
 	]
-	ai [
+	steps [
 		proc{|actions, view|
 			actions.attack_minion
 		},
@@ -141,7 +137,7 @@ test "Stealth" do
 	opponent_field [
 		"Proto Stealth"
 	]
-	ai [
+	steps [
 		proc{|actions, view|
 			assert (not actions.attack_minion), "Can still attack a minion with stealth"
 			finish
@@ -156,12 +152,90 @@ test "Battlecry" do
 	player_deck [
 		"Proto Battlecry",
 	]
-	ai [
+	steps [
 		proc{|actions, view|
 			actions.summon_minion
 		},
 		proc{|actions, view|
 			assert actions.summon_minion, "Battlecry not fired"
+			finish
+		},
+	]
+end
+
+test "Heal" do
+	player_hand [
+		"Ability Heal",
+	]
+	init {
+		@hero.health = 25
+	}
+	steps [
+		proc{|actions, view|
+			actions.cast.select do |action|
+				action[1] == view.hero
+			end.first
+		},
+		proc{|actions, view|
+			assert view.hero.health == 28, "Hero not healed"
+			finish
+		}
+	]
+end
+
+test "Damage" do
+	player_hand [
+		"Ability Damage",
+	]
+	steps [
+		proc{|actions, view|
+			actions.cast.select do |action|
+				action[1] == view.opponent_hero
+			end.first
+		},
+		proc{|actions, view|
+			assert view.opponent_hero.health == 25, "Opponent hero not damaged"
+			finish
+		}
+	]
+end
+
+test "Buff" do
+	player_field [
+		"Proto Powerful",
+	]
+	steps [
+		proc{|actions, view|
+			assert view.field.first.get_attack == 6, "Attack buff not correct"
+			assert view.field.first.get_health == 6, "Health buff not correct"
+			finish
+		}
+	]
+end
+
+test "Aura" do
+	player_field [
+		"Proto Charge",
+		"Proto Aura",
+	]
+	steps [
+		proc{|actions, view|
+			assert view.field.first.get_attack == 3, "Aura buff not work"
+			finish
+		}
+	]
+end
+
+test "Weapon" do
+	player_hand [
+		"Weapon 1",
+	]
+	steps [
+		proc{|actions, view|
+			actions.equip.first
+		},
+		proc{|actions, view|
+			assert actions.attack.count > 0, "Hero cannot attack with weapon"
 			finish
 		},
 	]

@@ -3,10 +3,10 @@ class Player
 		target.take_heal points
 	end
 
-	def equip(new_weapon)
+	def equip(card)
 		cost card.get_cost
 		card.purge
-		@hero.weapon = new_weapon
+		@hero.weapon = card
 	end
 
 	def cast(card, target)
