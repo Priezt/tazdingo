@@ -20,7 +20,7 @@ class Senario
 end
 
 class Array
-	[ :summon, :attack, :cast, :equip].each do |m|
+	[ :summon, :attack, :cast, :equip, :target ].each do |m|
 		define_method m do
 			self.select do |action|
 				action == m
@@ -236,6 +236,48 @@ test "Weapon" do
 		},
 		proc{|actions, view|
 			assert actions.attack.count > 0, "Hero cannot attack with weapon"
+			finish
+		},
+	]
+end
+
+test "Temp Text" do
+	player_hand [
+		"Proto Temp Text",
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert view.field.first.get_attack == 7, "Not buffed"
+			assert view.field.first.get_health == 7, "Not buffed"
+			Action[:turn_end]
+		},
+		proc{|actions, view|
+			assert view.field.first.get_attack == 2, "Not recovered"
+			assert view.field.first.get_health == 2, "Not recovered"
+			finish
+		},
+	]
+end
+
+test "Choose Target" do
+	player_hand [
+		"Proto Fire Element",
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.target.count == 2, "No 2 targets"
+			actions.target.select do |action|
+				action[0] != view.hero
+			end.first
+		},
+		proc{|actions, view|
+			assert view.opponent_hero.get_health == 27, "Target not damaged"
 			finish
 		},
 	]
