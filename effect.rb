@@ -7,6 +7,7 @@ class Player
 		cost card.get_cost
 		card.purge
 		@hero.weapon = card
+		card.born
 	end
 
 	def cast(card, target)
@@ -37,6 +38,7 @@ class Player
 	def put_at(card, position)
 		card.purge
 		@field.insert position, card
+		card.born
 		card.original_health = card.health
 		card.summon_sickness = true
 		fire card, :summon

@@ -9,10 +9,15 @@ class Card
 	attr_accessor :jobs
 	attr_accessor :owner
 	attr_accessor :texts
+	attr_accessor :born_id
 
 	@@cards = {}
 
 	alias old_clone clone
+
+	def born
+		@born_id = @owner.match.generate_born_id
+	end
 
 	def cleanup_text(timing)
 		texts.clone.select do |t|

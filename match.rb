@@ -26,7 +26,13 @@ class Match
 		@players[1 - @sub_turn]
 	end
 
+	def generate_born_id
+		@increment_born_id += 1
+		@increment_born_id
+	end
+
 	def initialize(deck1, ai1, deck2, ai2)
+		@increment_born_id = 0
 		@timing = :not_started
 		@logs = []
 		@players = []
@@ -111,6 +117,22 @@ class Match
 		if @turn > 200
 			raise "Too many turns"
 		end
+	end
+
+	def settle
+		@something_happened = false
+		check_death
+		check_enrage
+		unless @something_happened
+			return
+		end
+		settle
+	end
+
+	def check_death
+	end
+
+	def check_enrage
 	end
 end
 

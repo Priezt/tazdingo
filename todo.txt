@@ -1,4 +1,4 @@
-tests
+settle
 deathrattle
 secret
 combo

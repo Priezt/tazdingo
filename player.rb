@@ -7,8 +7,13 @@ class Player
 	attr_accessor :ai
 	attr_accessor :full_mana
 	attr_accessor :mana
+	attr_accessor :match
 
 	include Logger
+
+	def settle
+		@match.settle
+	end
 
 	def get_available_attack_targets
 		targets = []
