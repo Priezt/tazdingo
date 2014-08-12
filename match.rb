@@ -76,6 +76,7 @@ class Match
 			p.full_mana = 0
 			p.hero.hero_power = Card[p.hero.hero_power]
 			p.set_card_owner
+			p.hero.born
 		end
 	end
 
@@ -129,10 +130,26 @@ class Match
 		settle
 	end
 
+	def get_check_targets
+		players.map{|player|
+			player.field + [player.hero] + (
+				player.hero.weapon ? [player.hero.weapon] : []
+			)
+		}.flatten.sort_by{|card| card.born_id}
+	end
+
 	def check_death
+		cards = get_check_targets
+		cards.each do |card|
+			card.check_death
+		end
 	end
 
 	def check_enrage
+		cards = get_check_targets
+		cards.each do |card|
+			card.check_enrage
+		end
 	end
 end
 

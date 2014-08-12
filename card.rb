@@ -201,6 +201,9 @@ module Living
 		end
 	end
 
+	def check_enrage
+	end
+
 	def can_attack?
 		unless @has_attacked
 			@has_attacked = 0
@@ -279,9 +282,15 @@ class CardWeapon < Card
 
 	def reduce_durability
 		@durability -= 1
+	end
+
+	def check_death
 		if @durability <= 0
 			@owner.hero.weapon = nil
 		end
+	end
+
+	def check_enrage
 	end
 end
 

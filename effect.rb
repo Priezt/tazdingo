@@ -24,8 +24,6 @@ class Player
 		if source.type == :hero and source.weapon
 			source.weapon.reduce_durability
 		end
-		source.check_death
-		target.check_death
 		source.has_attacked += 1
 	end
 
@@ -68,7 +66,6 @@ class Player
 
 	def damage(target, points)
 		target.take_damage points
-		target.check_death
 	end
 
 	def assign_text(target, text)
