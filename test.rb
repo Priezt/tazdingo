@@ -282,3 +282,24 @@ test "Choose Target" do
 		},
 	]
 end
+
+test "Deathrattle" do
+	player_field [
+		"Proto Deathrattle",
+	]
+	player_deck [
+		"Proto Deathrattle",
+	]
+	opponent_field [
+		"Proto Taunt",
+	]
+	steps [
+		proc{|actions, view|
+			actions.attack_minion
+		},
+		proc{|actions, view|
+			assert view.hand.count == 1, "Deathrattle not fired"
+			finish
+		},
+	]
+end

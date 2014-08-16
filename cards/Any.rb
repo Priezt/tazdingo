@@ -120,3 +120,11 @@ card "Proto Fire Element" do
 		end
 	end
 end
+
+card "Proto Deathrattle" do
+	type :minion
+	number 1, 1, 1
+	deathrattle do
+		draw_card
+	end
+end

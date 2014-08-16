@@ -23,6 +23,7 @@ class LoseGame < Exception
 	end
 end
 
+require './pending_effect'
 require './text'
 require './phase'
 require './ai'

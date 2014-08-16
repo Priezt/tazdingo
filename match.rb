@@ -35,6 +35,7 @@ class Match
 		@increment_born_id = 0
 		@timing = :not_started
 		@logs = []
+		@pending_effects = []
 		@players = []
 		@players << Player.new(deck1, ai1, 1)
 		@players << Player.new(deck2, ai2, 2)
@@ -122,12 +123,21 @@ class Match
 
 	def settle
 		@something_happened = false
+		apply_pending_effect
 		check_death
 		check_enrage
-		unless @something_happened
+		unless @something_happened or @pending_effects.count > 0
 			return
 		end
 		settle
+	end
+
+	def apply_pending_effect
+		effects = @pending_effects
+		@pending_effects = []
+		effects.each do |effect|
+			effect.run
+		end
 	end
 
 	def get_check_targets
@@ -150,6 +160,10 @@ class Match
 		cards.each do |card|
 			card.check_enrage
 		end
+	end
+
+	def todo(pending_effect)
+		@pending_effects.push pending_effect
 	end
 end
 

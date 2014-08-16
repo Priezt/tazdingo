@@ -51,6 +51,14 @@ class Card
 		@texts + extra_texts
 	end
 
+	def check_deathrattle
+		get_texts.select do |text|
+			text == :deathrattle
+		end.each do |text|
+			@owner.match.todo PendingEffect.new(@owner, text.action_proc)
+		end
+	end
+
 	def remove_text(n)
 		@texts = @texts.select do |t|
 			t != n
@@ -197,6 +205,7 @@ module Living
 
 	def check_death
 		if get_health <= 0
+			check_deathrattle
 			die
 		end
 	end
@@ -286,6 +295,7 @@ class CardWeapon < Card
 
 	def check_death
 		if @durability <= 0
+			check_deathrattle
 			@owner.hero.weapon = nil
 		end
 	end

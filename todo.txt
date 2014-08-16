@@ -1,5 +1,3 @@
-settle
-deathrattle
 secret
 combo
 enrage
