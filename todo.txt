@@ -1,4 +1,3 @@
-armor
 secret
 combo
 enrage

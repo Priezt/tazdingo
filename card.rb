@@ -234,6 +234,10 @@ class CardHero < Card
 		@weapon = nil
 	end
 
+	def gain_armor(_armor)
+		@armor += _armor
+	end
+
 	def can_attack?
 		get_attack > 0
 	end
@@ -258,6 +262,15 @@ class CardHero < Card
 
 	def die
 		raise LoseGame.new(self)
+	end
+
+	alias _take_real_damage take_real_damage
+	def take_real_damage(_damage)
+		damage = _damage
+		this_damage = [damage, @armor].min
+		@armor -= this_damage
+		damage -= this_damage
+		_take_real_damage damage
 	end
 end
 

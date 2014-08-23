@@ -303,3 +303,21 @@ test "Deathrattle" do
 		},
 	]
 end
+
+test "Armor" do
+	player_field [
+		"Proto Fire Element",
+	]
+	init {
+		opponent.hero.gain_armor 2
+	}
+	steps [
+		proc{|actions, view|
+			actions.attack.first
+		},
+		proc{|actions, view|
+			assert view.opponent_hero.get_health == 26, "Armor not works"
+			finish
+		},
+	]
+end

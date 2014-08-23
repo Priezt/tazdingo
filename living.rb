@@ -25,6 +25,18 @@ module Living
 		log "healed #{old_health} -> #{new_health}"
 	end
 
+	def take_real_damage(_damage)
+		damage = _damage
+		get_texts.each do |t|
+			if damage > 0 and t == :buff and t.health > 0
+				this_damage = [damage, t.health].min
+				t.health -= this_damage
+				damage -= this_damage
+			end
+		end
+		@health -= damage
+	end
+
 	def take_damage(_damage)
 		damage = _damage
 		old_health = get_health
@@ -32,14 +44,7 @@ module Living
 			remove_text :divine_shield
 			log "Divine Shield Broken"
 		else
-			get_texts.each do |t|
-				if damage > 0 and t == :buff and t.health > 0
-					this_damage = [damage, t.health].min
-					t.health -= this_damage
-					damage -= this_damage
-				end
-			end
-			@health -= damage
+			take_real_damage damage
 		end
 		new_health = get_health
 		log "damaged #{old_health} -> #{new_health}"
