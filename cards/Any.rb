@@ -141,3 +141,16 @@ card "Ability Silent All" do
 		end
 	}
 end
+
+card "Ability Freeze All" do
+	type :ability
+	number 1
+	targets {
+		none
+	}
+	act {|target|
+		(field + opponent.field).each do |card|
+			freeze card
+		end
+	}
+end

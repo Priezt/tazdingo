@@ -348,3 +348,23 @@ test "Silent" do
 		},
 	]
 end
+
+test "Freeze" do
+	player_field [
+		"Proto Charge",
+	]
+	player_hand [
+		"Ability Freeze All",
+	]
+	steps [
+		proc{|actions, view|
+			assert actions.cast.count > 0, "Cannot cast ability"
+			actions.cast.first
+		},
+		proc{|actions, view|
+			assert actions.attack.count == 0
+			finish
+		},
+	]
+end
+

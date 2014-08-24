@@ -68,6 +68,10 @@ class Player
 		target.silent_self
 	end
 
+	def freeze(target)
+		assign_text target, Text[:freeze]
+	end
+
 	def damage(target, points)
 		target.take_damage points
 	end

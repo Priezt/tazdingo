@@ -68,7 +68,9 @@ module Living
 		unless @has_attacked
 			@has_attacked = 0
 		end
-		if @has_attacked > 0
+		if has_text? :freeze
+			false
+		elsif @has_attacked > 0
 			if @has_attacked == 1 and has_text? :windfury
 				true
 			else
