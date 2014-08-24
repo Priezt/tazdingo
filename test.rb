@@ -368,3 +368,27 @@ test "Freeze" do
 	]
 end
 
+test "Ability Combo" do
+	player_hand [
+		"Ability Combo",
+		"Ability Combo",
+	]
+	player_deck [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	steps [
+		proc{|actions, view|
+			actions.cast.first
+		},
+		proc{|actions, view|
+			assert view.hand.count == 2
+			actions.cast.first
+		},
+		proc{|actions, view|
+			assert view.hand.count == 3
+			finish
+		},
+	]
+end

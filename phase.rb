@@ -26,6 +26,7 @@ class PhaseBegin < Phase
 				card.has_attacked = 0
 				card.summon_sickness = false
 			end
+			current_player.turn_action_count = 0
 		end
 	end
 end

@@ -154,3 +154,18 @@ card "Ability Freeze All" do
 		end
 	}
 end
+
+card "Ability Combo" do
+	type :ability
+	number 1
+	targets {
+		none
+	}
+	no_combo {
+		draw_card
+	}
+	combo {
+		draw_card
+		draw_card
+	}
+end

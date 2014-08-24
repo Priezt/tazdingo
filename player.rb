@@ -8,6 +8,7 @@ class Player
 	attr_accessor :full_mana
 	attr_accessor :mana
 	attr_accessor :match
+	attr_accessor :turn_action_count
 
 	include Logger
 
@@ -102,6 +103,7 @@ class Player
 		@hand = []
 		@field = []
 		@this_card_stack = []
+		@turn_action_count = 0
 	end
 
 	def none

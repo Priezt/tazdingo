@@ -61,6 +61,27 @@ class CardLoader
 				cost args[0]
 			end
 		end
+
+		def no_combo(&block)
+			if @product.type == :ability
+				@acts = []
+				@acts << proc(&block)
+			end
+		end
+
+		def combo(&block)
+			if @product.type == :ability
+				@acts << proc(&block)
+				acts = @acts
+				job :act do |*args|
+					if @turn_action_count > 0
+						self.instance_exec(*args, &(acts[1]))
+					else
+						self.instance_exec(*args, &(acts[0]))
+					end
+				end
+			end
+		end
 	end
 
 	def card(name, &detail)

@@ -23,5 +23,6 @@ class Player
 		else
 			puts "Unknown action: #{action}"
 		end
+		@turn_action_count += 1
 	end
 end

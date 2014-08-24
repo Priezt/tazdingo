@@ -1,3 +1,4 @@
-secret
-combo
+combo: minion
+combo: weapon
 enrage
+secret
