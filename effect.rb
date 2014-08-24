@@ -64,6 +64,10 @@ class Player
 		end
 	end
 
+	def silent(target)
+		target.silent_self
+	end
+
 	def damage(target, points)
 		target.take_damage points
 	end

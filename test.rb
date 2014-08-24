@@ -7,9 +7,13 @@ class Senario
 		logs << txt
 	end
 
-	def assert(condition, msg)
+	def assert(condition, *args)
 		unless condition
-			puts "Assert Failed: #{msg}"
+			if args.count > 0
+				puts "Assert Failed: #{args[0]}"
+			else
+				puts "Assert Failed"
+			end
 			exit
 		end
 	end
@@ -316,7 +320,30 @@ test "Armor" do
 			actions.attack.first
 		},
 		proc{|actions, view|
-			assert view.opponent_hero.get_health == 26, "Armor not works"
+			assert view.opponent_hero.get_health == 26
+			finish
+		},
+	]
+end
+
+test "Silent" do
+	player_field [
+		"Proto Charge",
+		"Proto Aura",
+		"Proto Powerful",
+	]
+	player_hand [
+		"Ability Silent All",
+	]
+	steps [
+		proc{|actions, view|
+			assert actions.cast.count > 0, "Cannot cast ability"
+			actions.cast.first
+		},
+		proc{|actions, view|
+			assert view.field[0].get_attack == 1
+			assert view.field[1].get_attack == 1
+			assert view.field[2].get_attack == 1
 			finish
 		},
 	]

@@ -51,6 +51,10 @@ class Card
 		@texts + extra_texts
 	end
 
+	def silent_self
+		@texts = []
+	end
+
 	def check_deathrattle
 		get_texts.select do |text|
 			text == :deathrattle

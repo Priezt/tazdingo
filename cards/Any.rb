@@ -128,3 +128,16 @@ card "Proto Deathrattle" do
 		draw_card
 	end
 end
+
+card "Ability Silent All" do
+	type :ability
+	number 1
+	targets {
+		none
+	}
+	act {|target|
+		(field + opponent.field).each do |card|
+			silent card
+		end
+	}
+end
