@@ -392,3 +392,53 @@ test "Ability Combo" do
 		},
 	]
 end
+
+test "Weapon Combo" do
+	player_hand [
+		"Weapon Combo",
+		"Weapon Combo",
+	]
+	player_deck [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	steps [
+		proc{|actions, view|
+			actions.equip.first
+		},
+		proc{|actions, view|
+			assert view.hand.count == 1
+			actions.equip.first
+		},
+		proc{|actions, view|
+			assert view.hand.count == 1
+			finish
+		},
+	]
+end
+
+test "Minion Combo" do
+	player_hand [
+		"Proto Minion Combo",
+		"Proto Minion Combo",
+	]
+	player_deck [
+		"Ability Combo",
+		"Ability Combo",
+		"Ability Combo",
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert view.hand.count == 2
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert view.hand.count == 3
+			finish
+		},
+	]
+end

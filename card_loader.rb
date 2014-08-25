@@ -63,23 +63,26 @@ class CardLoader
 		end
 
 		def no_combo(&block)
-			if @product.type == :ability
-				@acts = []
-				@acts << proc(&block)
-			end
+			@combos = []
+			@combos << proc(&block)
 		end
 
 		def combo(&block)
-			if @product.type == :ability
-				@acts << proc(&block)
-				acts = @acts
-				job :act do |*args|
-					if @turn_action_count > 0
-						self.instance_exec(*args, &(acts[1]))
-					else
-						self.instance_exec(*args, &(acts[0]))
-					end
+			@combos << proc(&block)
+			combos = @combos
+			combo_action = proc{|*args|
+				if @turn_action_count > 0
+					self.instance_exec(*args, &(combos[1]))
+				else
+					self.instance_exec(*args, &(combos[0]))
 				end
+			}
+			if @product.type == :ability
+				job :act, &(combo_action)
+			elsif @product.type == :weapon
+				@product.texts << Text.action(:combo, &(combo_action))
+			elsif @product.type == :minion
+				@product.texts << Text.action(:combo, &(combo_action))
 			end
 		end
 	end

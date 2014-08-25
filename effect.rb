@@ -8,6 +8,7 @@ class Player
 		card.purge
 		@hero.weapon = card
 		card.born
+		do_action card, :combo
 	end
 
 	def cast(card, target)
@@ -46,6 +47,7 @@ class Player
 		cost card.get_cost
 		put_at card, position
 		do_action card, :battlecry
+		do_action card, :combo
 	end
 
 	def draw_card

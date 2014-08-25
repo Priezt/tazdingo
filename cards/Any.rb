@@ -169,3 +169,25 @@ card "Ability Combo" do
 		draw_card
 	}
 end
+
+card "Weapon Combo" do
+	type :weapon
+	number 1, 1, 3
+	no_combo {
+	}
+	combo {
+		draw_card
+	}
+end
+
+card "Proto Minion Combo" do
+	type :minion
+	number 1, 1, 3
+	no_combo {
+		draw_card
+	}
+	combo {
+		draw_card
+		draw_card
+	}
+end
