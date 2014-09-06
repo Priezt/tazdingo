@@ -8,6 +8,7 @@ class Text
 	attr_accessor :action_proc
 	attr_accessor :text_to_clean
 	attr_accessor :clean_timing
+	attr_accessor :event
 
 	def Text.[](_name, &block)
 		Text.new(_name, &block)

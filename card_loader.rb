@@ -85,6 +85,12 @@ class CardLoader
 				@product.texts << Text.action(:combo, &(combo_action))
 			end
 		end
+
+		def listen(event, &block)
+			text = Text.action(event, &block)
+			text.event = event
+			@product.texts << text
+		end
 	end
 
 	def card(name, &detail)
