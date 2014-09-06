@@ -59,9 +59,17 @@ class Card
 		get_texts.select do |text|
 			text == :deathrattle
 		end.each do |text|
-			@owner.match.todo PendingEffect.new(@owner, text.action_proc)
+			delay text.action_proc
 		end
 	end
+
+	proxy :owner, [
+		:delay,
+	]
+
+#	def delay(action_proc)
+#		@owner.delay action_proc
+#	end
 
 	def remove_text(n)
 		@texts = @texts.select do |t|

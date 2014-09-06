@@ -87,6 +87,10 @@ class Player
 		cleaner_text = Text.cleaner(text, clean_timing)
 		assign_text(target, cleaner_text)
 	end
+
+	def delay(action_proc)
+		@match.todo PendingEffect.new(self, action_proc)
+	end
 end
 
 ######################## For target select ########################

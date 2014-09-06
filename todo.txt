@@ -1,3 +1,5 @@
+after_death
+after_summon
 choose_one
 enrage
 secret
