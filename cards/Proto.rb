@@ -195,7 +195,7 @@ end
 card "Proto Listen Death" do
 	type :minion
 	number 1, 1, 2
-	listen :death do
+	listen :death do |card|
 		draw_card
 	end
 end

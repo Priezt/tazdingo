@@ -87,7 +87,7 @@ class CardLoader
 		end
 
 		def listen(event, &block)
-			text = Text.action(event, &block)
+			text = Text.action(:listen, &block)
 			text.event = event
 			@product.texts << text
 		end

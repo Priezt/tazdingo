@@ -1,3 +1,4 @@
+listen: summon
 after_death
 after_summon
 choose_one

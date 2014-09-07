@@ -57,6 +57,10 @@ module Living
 	def check_death
 		if get_health <= 0
 			check_deathrattle
+			this_card = self
+			delay proc{
+				@match.check_death_listener this_card
+			}
 			die
 		end
 	end

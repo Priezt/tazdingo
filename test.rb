@@ -442,3 +442,33 @@ test "Minion Combo" do
 		},
 	]
 end
+
+test "Listen Death" do
+	player_hand [
+		"Proto Listen Death",
+	]
+	player_field [
+		"Proto Charge",
+	]
+	player_deck [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	opponent_field [
+		"Proto Blank"
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			actions.attack_minion
+		},
+		proc{|actions, view|
+			assert view.hand.count == 1
+			finish
+		},
+	]
+end

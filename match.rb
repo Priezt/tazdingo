@@ -162,6 +162,19 @@ class Match
 		end
 	end
 
+	def check_death_listener(died_card)
+		cards = get_check_targets
+		cards.each do |card|
+			card.get_texts.select do |text|
+				text == :listen
+			end.select do |text|
+				text.event == :death
+			end.each do |text|
+				card.owner.instance_exec [died_card], &(text.action_proc)
+			end
+		end
+	end
+
 	def todo(pending_effect)
 		@pending_effects.push pending_effect
 	end
