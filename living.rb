@@ -65,6 +65,13 @@ module Living
 		end
 	end
 
+	def summoned
+		this_card = self
+		delay proc{
+			@match.check_summon_listener this_card
+		}
+	end
+
 	def check_enrage
 	end
 

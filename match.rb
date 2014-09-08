@@ -170,7 +170,24 @@ class Match
 			end.select do |text|
 				text.event == :death
 			end.each do |text|
-				card.owner.instance_exec [died_card], &(text.action_proc)
+				card.owner.push_this_card card
+				card.owner.instance_exec died_card, &(text.action_proc)
+				card.owner.pop_this_card
+			end
+		end
+	end
+
+	def check_summon_listener(summoned_card)
+		cards = get_check_targets
+		cards.each do |card|
+			card.get_texts.select do |text|
+				text == :listen
+			end.select do |text|
+				text.event == :summon
+			end.each do |text|
+				card.owner.push_this_card card
+				card.owner.instance_exec summoned_card, &(text.action_proc)
+				card.owner.pop_this_card
 			end
 		end
 	end

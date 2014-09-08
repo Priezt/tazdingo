@@ -472,3 +472,27 @@ test "Listen Death" do
 		},
 	]
 end
+
+test "Listen Summon" do
+	player_hand [
+		"Proto Charge",
+	]
+	player_field [
+		"Proto Listen Summon",
+	]
+	player_deck [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert view.hand.count == 1
+			finish
+		},
+	]
+end

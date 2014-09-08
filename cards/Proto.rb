@@ -199,3 +199,13 @@ card "Proto Listen Death" do
 		draw_card
 	end
 end
+
+card "Proto Listen Summon" do
+	type :minion
+	number 1, 1, 2
+	listen :summon do |card|
+		if card != this_card
+			draw_card
+		end
+	end
+end

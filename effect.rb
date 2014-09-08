@@ -41,6 +41,7 @@ class Player
 		card.original_health = card.health
 		card.summon_sickness = true
 		fire card, :summon
+		card.summoned
 	end
 
 	def summon(card, position)
