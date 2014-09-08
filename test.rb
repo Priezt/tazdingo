@@ -24,7 +24,7 @@ class Senario
 end
 
 class Array
-	[ :summon, :attack, :cast, :equip, :target ].each do |m|
+	[ :summon, :attack, :cast, :equip, :target, :choose_one ].each do |m|
 		define_method m do
 			self.select do |action|
 				action == m
@@ -492,6 +492,40 @@ test "Listen Summon" do
 		},
 		proc{|actions, view|
 			assert view.hand.count == 1
+			finish
+		},
+	]
+end
+
+test "Choose One Minion" do
+	player_hand [
+		"Ability Choose One",
+		"Ability Choose One",
+	]
+	player_deck [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	steps [
+		proc{|actions, view|
+			actions.cast[0]
+		},
+		proc{|actions, view|
+			assert actions.choose_one.count == 2
+			actions.choose_one[0]
+		},
+		proc{|actions, view|
+			assert view.hand.count == 2
+			actions.cast[0]
+		},
+		proc{|actions, view|
+			assert actions.choose_one.count == 2
+			actions.choose_one[1]
+		},
+		proc{|actions, view|
+			assert view.hand.count == 3
 			finish
 		},
 	]

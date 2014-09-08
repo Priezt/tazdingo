@@ -1,5 +1,4 @@
-after_death
-after_summon
-choose_one
+choose_one: minion
 enrage
 secret
+overload

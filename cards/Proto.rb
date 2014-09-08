@@ -209,3 +209,14 @@ card "Proto Listen Summon" do
 		end
 	end
 end
+
+card "Ability Choose One" do
+	type :ability
+	number 1
+	choose_one proc{
+		draw_card
+	}, proc{
+		draw_card
+		draw_card
+	}
+end

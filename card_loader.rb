@@ -86,6 +86,29 @@ class CardLoader
 			end
 		end
 
+		def choose_one(proc1,proc2)
+			choices = [proc1, proc2]
+			choose_one_action = proc{|*args|
+				chosen_action = choose [1, 2].map{|n|
+					Action[:choose_one, n]
+				}
+				if chosen_action[0] == 1
+					chosen_action = choices[0]
+				elsif chosen_action[0] == 2
+					chosen_action = choices[1]
+				else
+					raise "Choice must be 1 or 2"
+				end
+				self.instance_exec(*args, &(chosen_action))
+			}
+			if @product.type == :ability
+				targets {
+					none
+				}
+				job :act, &(choose_one_action)
+			end
+		end
+
 		def listen(event, &block)
 			text = Text.action(:listen, &block)
 			text.event = event
