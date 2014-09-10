@@ -497,7 +497,7 @@ test "Listen Summon" do
 	]
 end
 
-test "Choose One Minion" do
+test "Choose One Ability" do
 	player_hand [
 		"Ability Choose One",
 		"Ability Choose One",
@@ -530,3 +530,37 @@ test "Choose One Minion" do
 		},
 	]
 end
+
+test "Choose One Minion" do
+	player_hand [
+		"Minion Choose One",
+		"Minion Choose One",
+	]
+	player_deck [
+		"Ability Choose One",
+		"Ability Choose One",
+		"Ability Choose One",
+	]
+	steps [
+		proc{|actions, view|
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.choose_one.count == 2
+			actions.choose_one[0]
+		},
+		proc{|actions, view|
+			assert view.hand.count == 2
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.choose_one.count == 2
+			actions.choose_one[1]
+		},
+		proc{|actions, view|
+			assert view.hand.count == 3
+			finish
+		},
+	]
+end
+

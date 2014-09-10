@@ -106,6 +106,8 @@ class CardLoader
 					none
 				}
 				job :act, &(choose_one_action)
+			elsif @product.type == :minion
+				@product.texts << Text.action(:choose_one, &(choose_one_action))
 			end
 		end
 

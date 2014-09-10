@@ -1,4 +1,3 @@
-choose_one: minion
 enrage
 secret
 overload

@@ -49,6 +49,7 @@ class Player
 		put_at card, position
 		do_action card, :battlecry
 		do_action card, :combo
+		do_action card, :choose_one
 	end
 
 	def draw_card
