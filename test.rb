@@ -5,6 +5,7 @@ class Senario
 	def log(msg)
 		txt = "[LOG]#{msg}"
 		logs << txt
+		#puts txt
 	end
 
 	def assert(condition, *args)
@@ -564,3 +565,29 @@ test "Choose One Minion" do
 	]
 end
 
+test "Enrage" do
+	player_hand [
+		"Ability Heal",
+	]
+	player_field [
+		"Proto Charge",
+	]
+	opponent_field [
+		"Proto Enrage",
+	]
+	steps [
+		proc{|actions, view|
+			actions.attack_minion
+		},
+		proc{|actions, view|
+			assert view.opponent_field[0].get_attack == 4
+			actions.cast.select do |action|
+				action[1].name == "Proto Enrage"
+			end.first
+		},
+		proc{|actions, view|
+			assert view.opponent_field[0].get_attack == 1
+			finish
+		},
+	]
+end

@@ -111,6 +111,11 @@ class CardLoader
 			end
 		end
 
+		def enrage(proc_into_enrage, proc_outof_enrage)
+			@product.texts << Text.action(:into_enrage, &(proc_into_enrage))
+			@product.texts << Text.action(:outof_enrage, &(proc_outof_enrage))
+		end
+
 		def listen(event, &block)
 			text = Text.action(:listen, &block)
 			text.event = event

@@ -15,13 +15,39 @@ module Living
 		@original_health + health_buff
 	end
 
-	def take_heal(points)
-		old_health = @health
-		@health += points
-		if @health > max_health
-			@health = max_health
+	def into_enrage
+		card = self
+		delay proc{
+			do_action card, :into_enrage
+		}
+	end
+
+	def outof_enrage
+		card = self
+		delay proc{
+			do_action card, :outof_enrage
+		}
+	end
+
+	def take_heal(_points)
+		old_health = get_health
+		points = _points
+		if points > 0 and @health < @original_health
+			this_points = [points, @original_health - @health].min
+			@health += this_points
+			points -= this_points
 		end
-		new_health = @health
+		get_texts.reverse.each do |t|
+			if points > 0 and t == :buff and t.health < t.health_buff
+				this_points = [points, t.health_buff - t.health].min
+				t.health += this_points
+				points -= this_points
+			end
+		end
+		new_health = get_health
+		if new_health == max_health
+			outof_enrage
+		end
 		log "healed #{old_health} -> #{new_health}"
 	end
 
@@ -35,6 +61,7 @@ module Living
 			end
 		end
 		@health -= damage
+		into_enrage
 	end
 
 	def take_damage(_damage)

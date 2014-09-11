@@ -231,3 +231,20 @@ card "Minion Choose One" do
 		draw_card
 	}
 end
+
+card "Proto Enrage" do
+	type :minion
+	number 1, 1, 5
+	enrage proc{
+		enrage_buff_text = Text.new(:buff){
+			@attack_buff = 3
+			@health_buff = 0
+		}
+		this_card.texts << enrage_buff_text
+		this_card.instance_eval{
+			@enrage_buff_text = enrage_buff_text
+		}
+	}, proc{
+		this_card.texts.delete this_card.instance_eval{@enrage_buff_text}
+	}
+end
