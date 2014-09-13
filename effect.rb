@@ -5,6 +5,7 @@ class Player
 
 	def equip(card)
 		cost card.get_cost
+		do_action card, :overload
 		card.purge
 		@hero.weapon = card
 		card.born
@@ -13,8 +14,13 @@ class Player
 
 	def cast(card, target)
 		cost card.get_cost
+		do_action card, :overload
 		card.purge
 		run card, :act, target
+	end
+
+	def overload(v)
+		@next_overload += v
 	end
 
 	def battle(source, target)
@@ -46,6 +52,7 @@ class Player
 
 	def summon(card, position)
 		cost card.get_cost
+		do_action card, :overload
 		put_at card, position
 		do_action card, :battlecry
 		do_action card, :combo

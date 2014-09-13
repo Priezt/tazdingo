@@ -592,3 +592,58 @@ test "Enrage" do
 	]
 end
 
+test "Mana Cost" do
+	player_hand [
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	player_mana 3
+	steps [
+		proc{|actions, view|
+			assert actions.summon.count > 0
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.summon.count > 0
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.summon.count > 0
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.summon.count == 0
+			finish
+		},
+	]
+end
+
+test "Overload" do
+	player_hand [
+		"Proto Overload",
+		"Proto Charge",
+		"Proto Charge",
+	]
+	player_mana 6
+	steps [
+		proc{|actions, view|
+			actions.summon.select do |action|
+				action[0].name == "Proto Overload"
+			end.first
+		},
+		proc{|actions, view|
+			Action[:turn_end]
+		},
+		proc{|actions, view|
+			assert actions.summon.count > 0
+			actions.summon_minion
+		},
+		proc{|actions, view|
+			assert actions.summon.count == 0
+			finish
+		},
+	]
+end

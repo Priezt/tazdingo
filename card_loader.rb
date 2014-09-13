@@ -116,6 +116,13 @@ class CardLoader
 			@product.texts << Text.action(:outof_enrage, &(proc_outof_enrage))
 		end
 
+		def overload(v)
+			text = Text.action :overload do
+				self.overload v
+			end
+			@product.texts << text
+		end
+
 		def listen(event, &block)
 			text = Text.action(:listen, &block)
 			text.event = event

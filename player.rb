@@ -44,6 +44,8 @@ class Player
 		end.first
 	end
 
+	alias old_to_s to_s
+
 	def to_s
 		"Player#{@player_id}(#{@hero.name})(#{@mana}/#{@full_mana}):hand(#{
 			@hand.map(&:to_s).join(",")
@@ -73,22 +75,22 @@ class Player
 		new_card
 	end
 
+	def available_mana
+		@mana - @current_overload
+	end
+
 	def get_all_actions
 		actions = []
 		actions << Action[:turn_end]
 		actions += @hand.map{|card|
-			if card.get_cost <= card.owner.mana
+			if card.get_cost <= card.owner.available_mana
 				card.get_actions_from_hand
 			else
 				[]
 			end
 		}.reduce([]){|x, y| x + y}
 		actions += @field.map{|card|
-			if card.get_cost <= card.owner.mana
-				card.get_actions_from_field
-			else
-				[]
-			end
+			card.get_actions_from_field
 		}.reduce([]){|x, y| x + y}
 		actions += @hero.hero_power.get_actions_for_hero_power
 		actions += @hero.get_actions_for_hero
@@ -104,6 +106,14 @@ class Player
 		@field = []
 		@this_card_stack = []
 		@turn_action_count = 0
+		@current_overload = 0
+		@next_overload = 0
+		@full_mana = 0
+	end
+
+	def set_overload
+		@current_overload = @next_overload
+		@next_overload = 0
 	end
 
 	def none

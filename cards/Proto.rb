@@ -248,3 +248,10 @@ card "Proto Enrage" do
 		this_card.texts.delete this_card.instance_eval{@enrage_buff_text}
 	}
 end
+
+card "Proto Overload" do
+	type :minion
+	number 1, 8, 8
+	overload 5
+end
+

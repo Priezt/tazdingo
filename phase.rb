@@ -18,6 +18,7 @@ class PhaseBegin < Phase
 				opponent_player.full_mana = @player2_mana
 			end
 			current_player.restore_mana
+			current_player.set_overload
 			unless in_senario?
 				current_player.draw_card
 			end
