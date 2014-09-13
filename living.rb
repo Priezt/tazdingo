@@ -88,6 +88,7 @@ module Living
 			delay proc{
 				@match.check_death_listener this_card
 			}
+			@owner.do_action this_card, :outof_enrage
 			die
 		end
 	end
